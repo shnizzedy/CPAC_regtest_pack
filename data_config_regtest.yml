@@ -364,129 +364,129 @@
 # Healthy Brain Network (HBN) data, Site-RU
 #     for movies data, and PEER scans
 - anat: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAA948VFH/anat/sub-NDARAA948VFH_acq-HCP_T1w.nii.gz
-func:
-  movieDM:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAA948VFH/func/sub-NDARAA948VFH_task-movieDM_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAA948VFH/func/sub-NDARAA948VFH_task-movieDM_bold.json
-  movieTP:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAA948VFH/func/sub-NDARAA948VFH_task-movieTP_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAA948VFH/func/sub-NDARAA948VFH_task-movieTP_bold.json
-  peer_run-1:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAA948VFH/func/sub-NDARAA948VFH_task-peer_run-1_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAA948VFH/func/sub-NDARAA948VFH_task-peer_run-1_bold.json
-  peer_run-2:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAA948VFH/func/sub-NDARAA948VFH_task-peer_run-2_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAA948VFH/func/sub-NDARAA948VFH_task-peer_run-2_bold.json
-  peer_run-3:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAA948VFH/func/sub-NDARAA948VFH_task-peer_run-3_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAA948VFH/func/sub-NDARAA948VFH_task-peer_run-3_bold.json
-  rest_run-1:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAA948VFH/func/sub-NDARAA948VFH_task-rest_run-1_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAA948VFH/func/sub-NDARAA948VFH_task-rest_run-1_bold.json
-  rest_run-2:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAA948VFH/func/sub-NDARAA948VFH_task-rest_run-2_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAA948VFH/func/sub-NDARAA948VFH_task-rest_run-2_bold.json
-site: Site-RU
-subject_id: NDARAA948VFH
-unique_id: ses-1
+  func:
+    movieDM:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAA948VFH/func/sub-NDARAA948VFH_task-movieDM_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAA948VFH/func/sub-NDARAA948VFH_task-movieDM_bold.json
+    movieTP:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAA948VFH/func/sub-NDARAA948VFH_task-movieTP_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAA948VFH/func/sub-NDARAA948VFH_task-movieTP_bold.json
+    peer_run-1:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAA948VFH/func/sub-NDARAA948VFH_task-peer_run-1_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAA948VFH/func/sub-NDARAA948VFH_task-peer_run-1_bold.json
+    peer_run-2:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAA948VFH/func/sub-NDARAA948VFH_task-peer_run-2_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAA948VFH/func/sub-NDARAA948VFH_task-peer_run-2_bold.json
+    peer_run-3:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAA948VFH/func/sub-NDARAA948VFH_task-peer_run-3_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAA948VFH/func/sub-NDARAA948VFH_task-peer_run-3_bold.json
+    rest_run-1:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAA948VFH/func/sub-NDARAA948VFH_task-rest_run-1_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAA948VFH/func/sub-NDARAA948VFH_task-rest_run-1_bold.json
+    rest_run-2:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAA948VFH/func/sub-NDARAA948VFH_task-rest_run-2_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAA948VFH/func/sub-NDARAA948VFH_task-rest_run-2_bold.json
+  site: Site-RU
+  subject_id: NDARAA948VFH
+  unique_id: ses-1
 - anat: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC495TJ2/anat/sub-NDARAC495TJ2_acq-HCP_T1w.nii.gz
-func:
-  movieDM:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC495TJ2/func/sub-NDARAC495TJ2_task-movieDM_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC495TJ2/func/sub-NDARAC495TJ2_task-movieDM_bold.json
-  movieTP:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC495TJ2/func/sub-NDARAC495TJ2_task-movieTP_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC495TJ2/func/sub-NDARAC495TJ2_task-movieTP_bold.json
-  peer_run-1:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC495TJ2/func/sub-NDARAC495TJ2_task-peer_run-1_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC495TJ2/func/sub-NDARAC495TJ2_task-peer_run-1_bold.json
-  peer_run-2:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC495TJ2/func/sub-NDARAC495TJ2_task-peer_run-2_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC495TJ2/func/sub-NDARAC495TJ2_task-peer_run-2_bold.json
-  peer_run-3:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC495TJ2/func/sub-NDARAC495TJ2_task-peer_run-3_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC495TJ2/func/sub-NDARAC495TJ2_task-peer_run-3_bold.json
-  rest_run-1:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC495TJ2/func/sub-NDARAC495TJ2_task-rest_run-1_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC495TJ2/func/sub-NDARAC495TJ2_task-rest_run-1_bold.json
-  rest_run-2:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC495TJ2/func/sub-NDARAC495TJ2_task-rest_run-2_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC495TJ2/func/sub-NDARAC495TJ2_task-rest_run-2_bold.json
-site: Site-RU
-subject_id: NDARAC495TJ2
-unique_id: ses-1
+  func:
+    movieDM:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC495TJ2/func/sub-NDARAC495TJ2_task-movieDM_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC495TJ2/func/sub-NDARAC495TJ2_task-movieDM_bold.json
+    movieTP:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC495TJ2/func/sub-NDARAC495TJ2_task-movieTP_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC495TJ2/func/sub-NDARAC495TJ2_task-movieTP_bold.json
+    peer_run-1:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC495TJ2/func/sub-NDARAC495TJ2_task-peer_run-1_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC495TJ2/func/sub-NDARAC495TJ2_task-peer_run-1_bold.json
+    peer_run-2:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC495TJ2/func/sub-NDARAC495TJ2_task-peer_run-2_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC495TJ2/func/sub-NDARAC495TJ2_task-peer_run-2_bold.json
+    peer_run-3:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC495TJ2/func/sub-NDARAC495TJ2_task-peer_run-3_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC495TJ2/func/sub-NDARAC495TJ2_task-peer_run-3_bold.json
+    rest_run-1:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC495TJ2/func/sub-NDARAC495TJ2_task-rest_run-1_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC495TJ2/func/sub-NDARAC495TJ2_task-rest_run-1_bold.json
+    rest_run-2:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC495TJ2/func/sub-NDARAC495TJ2_task-rest_run-2_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC495TJ2/func/sub-NDARAC495TJ2_task-rest_run-2_bold.json
+  site: Site-RU
+  subject_id: NDARAC495TJ2
+  unique_id: ses-1
 - anat: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC853DTE/anat/sub-NDARAC853DTE_acq-HCP_T1w.nii.gz
-func:
-  movieDM:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC853DTE/func/sub-NDARAC853DTE_task-movieDM_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC853DTE/func/sub-NDARAC853DTE_task-movieDM_bold.json
-  movieTP:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC853DTE/func/sub-NDARAC853DTE_task-movieTP_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC853DTE/func/sub-NDARAC853DTE_task-movieTP_bold.json
-  peer_run-1:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC853DTE/func/sub-NDARAC853DTE_task-peer_run-1_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC853DTE/func/sub-NDARAC853DTE_task-peer_run-1_bold.json
-  peer_run-2:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC853DTE/func/sub-NDARAC853DTE_task-peer_run-2_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC853DTE/func/sub-NDARAC853DTE_task-peer_run-2_bold.json
-  peer_run-3:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC853DTE/func/sub-NDARAC853DTE_task-peer_run-3_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC853DTE/func/sub-NDARAC853DTE_task-peer_run-3_bold.json
-  rest_run-1:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC853DTE/func/sub-NDARAC853DTE_task-rest_run-1_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC853DTE/func/sub-NDARAC853DTE_task-rest_run-1_bold.json
-  rest_run-2:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC853DTE/func/sub-NDARAC853DTE_task-rest_run-2_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC853DTE/func/sub-NDARAC853DTE_task-rest_run-2_bold.json
-site: Site-RU
-subject_id: NDARAC853DTE
-unique_id: ses-1
+  func:
+    movieDM:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC853DTE/func/sub-NDARAC853DTE_task-movieDM_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC853DTE/func/sub-NDARAC853DTE_task-movieDM_bold.json
+    movieTP:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC853DTE/func/sub-NDARAC853DTE_task-movieTP_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC853DTE/func/sub-NDARAC853DTE_task-movieTP_bold.json
+    peer_run-1:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC853DTE/func/sub-NDARAC853DTE_task-peer_run-1_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC853DTE/func/sub-NDARAC853DTE_task-peer_run-1_bold.json
+    peer_run-2:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC853DTE/func/sub-NDARAC853DTE_task-peer_run-2_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC853DTE/func/sub-NDARAC853DTE_task-peer_run-2_bold.json
+    peer_run-3:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC853DTE/func/sub-NDARAC853DTE_task-peer_run-3_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC853DTE/func/sub-NDARAC853DTE_task-peer_run-3_bold.json
+    rest_run-1:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC853DTE/func/sub-NDARAC853DTE_task-rest_run-1_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC853DTE/func/sub-NDARAC853DTE_task-rest_run-1_bold.json
+    rest_run-2:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC853DTE/func/sub-NDARAC853DTE_task-rest_run-2_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC853DTE/func/sub-NDARAC853DTE_task-rest_run-2_bold.json
+  site: Site-RU
+  subject_id: NDARAC853DTE
+  unique_id: ses-1
 - anat: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC904DMU/anat/sub-NDARAC904DMU_acq-HCP_T1w.nii.gz
-func:
-  movieDM:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC904DMU/func/sub-NDARAC904DMU_task-movieDM_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC904DMU/func/sub-NDARAC904DMU_task-movieDM_bold.json
-  movieTP:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC904DMU/func/sub-NDARAC904DMU_task-movieTP_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC904DMU/func/sub-NDARAC904DMU_task-movieTP_bold.json
-  peer_run-1:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC904DMU/func/sub-NDARAC904DMU_task-peer_run-1_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC904DMU/func/sub-NDARAC904DMU_task-peer_run-1_bold.json
-  peer_run-2:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC904DMU/func/sub-NDARAC904DMU_task-peer_run-2_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC904DMU/func/sub-NDARAC904DMU_task-peer_run-2_bold.json
-  peer_run-3:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC904DMU/func/sub-NDARAC904DMU_task-peer_run-3_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC904DMU/func/sub-NDARAC904DMU_task-peer_run-3_bold.json
-  rest_run-1:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC904DMU/func/sub-NDARAC904DMU_task-rest_run-1_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC904DMU/func/sub-NDARAC904DMU_task-rest_run-1_bold.json
-  rest_run-2:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC904DMU/func/sub-NDARAC904DMU_task-rest_run-2_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC904DMU/func/sub-NDARAC904DMU_task-rest_run-2_bold.json
-site: Site-RU
-subject_id: NDARAC904DMU
-unique_id: ses-1
+  func:
+    movieDM:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC904DMU/func/sub-NDARAC904DMU_task-movieDM_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC904DMU/func/sub-NDARAC904DMU_task-movieDM_bold.json
+    movieTP:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC904DMU/func/sub-NDARAC904DMU_task-movieTP_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC904DMU/func/sub-NDARAC904DMU_task-movieTP_bold.json
+    peer_run-1:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC904DMU/func/sub-NDARAC904DMU_task-peer_run-1_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC904DMU/func/sub-NDARAC904DMU_task-peer_run-1_bold.json
+    peer_run-2:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC904DMU/func/sub-NDARAC904DMU_task-peer_run-2_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC904DMU/func/sub-NDARAC904DMU_task-peer_run-2_bold.json
+    peer_run-3:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC904DMU/func/sub-NDARAC904DMU_task-peer_run-3_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC904DMU/func/sub-NDARAC904DMU_task-peer_run-3_bold.json
+    rest_run-1:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC904DMU/func/sub-NDARAC904DMU_task-rest_run-1_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC904DMU/func/sub-NDARAC904DMU_task-rest_run-1_bold.json
+    rest_run-2:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC904DMU/func/sub-NDARAC904DMU_task-rest_run-2_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAC904DMU/func/sub-NDARAC904DMU_task-rest_run-2_bold.json
+  site: Site-RU
+  subject_id: NDARAC904DMU
+  unique_id: ses-1
 - anat: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAD224CRB/anat/sub-NDARAD224CRB_acq-HCP_T1w.nii.gz
-func:
-  movieTP:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAD224CRB/func/sub-NDARAD224CRB_task-movieTP_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAD224CRB/func/sub-NDARAD224CRB_task-movieTP_bold.json
-  peer_run-1:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAD224CRB/func/sub-NDARAD224CRB_task-peer_run-1_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAD224CRB/func/sub-NDARAD224CRB_task-peer_run-1_bold.json
-  peer_run-2:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAD224CRB/func/sub-NDARAD224CRB_task-peer_run-2_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAD224CRB/func/sub-NDARAD224CRB_task-peer_run-2_bold.json
-  peer_run-3:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAD224CRB/func/sub-NDARAD224CRB_task-peer_run-3_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAD224CRB/func/sub-NDARAD224CRB_task-peer_run-3_bold.json
-  rest_run-1:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAD224CRB/func/sub-NDARAD224CRB_task-rest_run-1_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAD224CRB/func/sub-NDARAD224CRB_task-rest_run-1_bold.json
-  rest_run-2:
-    scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAD224CRB/func/sub-NDARAD224CRB_task-rest_run-2_bold.nii.gz
-    scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAD224CRB/func/sub-NDARAD224CRB_task-rest_run-2_bold.json
-site: Site-RU
-subject_id: NDARAD224CRB
-unique_id: ses-1
+  func:
+    movieTP:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAD224CRB/func/sub-NDARAD224CRB_task-movieTP_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAD224CRB/func/sub-NDARAD224CRB_task-movieTP_bold.json
+    peer_run-1:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAD224CRB/func/sub-NDARAD224CRB_task-peer_run-1_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAD224CRB/func/sub-NDARAD224CRB_task-peer_run-1_bold.json
+    peer_run-2:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAD224CRB/func/sub-NDARAD224CRB_task-peer_run-2_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAD224CRB/func/sub-NDARAD224CRB_task-peer_run-2_bold.json
+    peer_run-3:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAD224CRB/func/sub-NDARAD224CRB_task-peer_run-3_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAD224CRB/func/sub-NDARAD224CRB_task-peer_run-3_bold.json
+    rest_run-1:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAD224CRB/func/sub-NDARAD224CRB_task-rest_run-1_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAD224CRB/func/sub-NDARAD224CRB_task-rest_run-1_bold.json
+    rest_run-2:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAD224CRB/func/sub-NDARAD224CRB_task-rest_run-2_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-RU/sub-NDARAD224CRB/func/sub-NDARAD224CRB_task-rest_run-2_bold.json
+  site: Site-RU
+  subject_id: NDARAD224CRB
+  unique_id: ses-1
