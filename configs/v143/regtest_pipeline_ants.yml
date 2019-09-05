@@ -259,7 +259,7 @@ regOption :  ['ANTS']
 
 
 # If a lesion mask is available for a T1w image, use it to improve the ANTs' registration
-use_lesion_mask : [1]
+use_lesion_mask : [0]
 
 
 # Configuration file to be used by FSL to set FNIRT parameters.
