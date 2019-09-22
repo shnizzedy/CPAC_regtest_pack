@@ -307,7 +307,7 @@ PRIORS_CSF :  $priors_path/avg152T1_csf_bin.nii.gz
 
 # First timepoint to include in analysis.
 # Default is 0 (beginning of timeseries).
-startIdx :  4
+startIdx :  0
 
 
 # Last timepoint to include in analysis.
@@ -332,7 +332,7 @@ slice_timing_pattern :  ['Use NIFTI Header']
 
 
 # Perform field map correction using a single phase difference image, a subtraction of the two phase images from each echo. Default scanner for this method is SIEMENS.
-runEPI_DistCorr :  [1]
+runEPI_DistCorr :  [0]
 
 
 # Since the quality of the distortion heavily relies on the skull-stripping step, we provide a choice of method (AFNI 3dSkullStrip or FSL BET).

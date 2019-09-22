@@ -1,9 +1,15 @@
 #!/usr/bin/env python
 
+import os
+import numpy as np
+import scipy
+from scipy import stats
+
+
 def read_yml_file(yml_filepath):
     import yaml
     with open(yml_filepath,"r") as f:
-        yml_dict = yaml.load(f)
+        yml_dict = yaml.safe_load(f)
 
     return yml_dict
 
@@ -11,7 +17,7 @@ def read_yml_file(yml_filepath):
 def write_yml_file(yml_dict, out_filepath):
     import yaml
     with open(out_filepath, "wt") as f:
-        yaml.dump(yml_dict, f)
+        yaml.safe_dump(yml_dict, f)
 
 
 def read_txt_file(txt_file):
@@ -43,6 +49,7 @@ def gather_filepaths(output_folder_path):
     import os
     filepaths = []
 
+    print("Gathering file paths from {0}\n".format(output_folder_path))
     for root, dirs, files in os.walk(output_folder_path):
         # loops through every file in the directory
         for filename in files:
@@ -77,6 +84,7 @@ def pull_NIFTI_file_list_from_s3(s3_directory, s3_creds):
 
     # Build S3-subjects to download
     # maintain the "s3://<bucket_name>" prefix!!
+    print("Gathering file paths from {0}\n".format(s3_directory))
     for bk in bucket.objects.filter(Prefix=bucket_prefix):
         if ".nii" in str(bk.key):
             s3_list.append(os.path.join("s3://", bucket_name, str(bk.key)))
@@ -114,6 +122,17 @@ def download_from_s3(s3_path, local_path, s3_creds):
     return local_file
 
 
+def parse_csv_data(csv_lines):
+    parsed_lines = []
+    for line in csv_lines:
+        if '#' not in line:
+            new_row = [float(x.rstrip('\n')) for x in line.split('\t') if x != '']
+            parsed_lines.append(new_row)
+        csv_np_data = np.asarray(parsed_lines)
+
+    return csv_np_data
+
+
 def concordance(x, y, rho):
     """
     Calculates Lin's concordance correlation coefficient.
@@ -138,81 +157,20 @@ def concordance(x, y, rho):
     return ccc
 
 
-def test_create_unique_file_dict():
-
-    from cpac_correlations_wf import create_unique_file_dict
-
-    filepaths = [
-      "/path/sub001/centrality_outputs/_scan_rest_1/degree_centrality_weighted.nii.gz",
-      "/path/sub001/centrality_outputs/_scan_rest_1/eigenvector_centrality_weighted.nii.gz",
-      "/path/sub002/alff_to_standard_smooth/_scan_rest_1/file.nii.gz"
-    ]
-
-    output_folder = "/path"
-
-    # output dictionary should have dictionaries as values, which have tuples 
-    # as keys, where the tuple identifies the same file across different CPAC
-    # versions (and thus potentially different filepaths)
-    #   multiple dictionary levels to make it easy to pull up all of the
-    #   entries for one particular derivative
-    ref_output = {
-      'alff_to_standard_smooth':
-        {('alff_to_standard_smooth', 
-          '/sub002/alff_to_standard_smooth/_scan_rest_1/', '1'):
-            ['/path/sub002/alff_to_standard_smooth/_scan_rest_1/file.nii.gz']},
-      'centrality_outputs: degree': 
-        {('centrality_outputs: degree', 
-          '/sub001/centrality_outputs/_scan_rest_1/', '1'): 
-            ['/path/sub001/centrality_outputs/_scan_rest_1/degree_centrality_weighted.nii.gz']},
-      'centrality_outputs: eigenvector': 
-        {('centrality_outputs: eigenvector', 
-          '/sub001/centrality_outputs/_scan_rest_1/', '1'):
-            ['/path/sub001/centrality_outputs/_scan_rest_1/eigenvector_centrality_weighted.nii.gz']}
-    }
-
-    file_dict = create_unique_file_dict(filepaths, output_folder)
-
-    assert ref_output == file_dict
+def correlate(data_1, data_2):
+    pearson = scipy.stats.pearsonr(data_1.flatten(), data_2.flatten())[0]
+    concor = concordance(data_1.flatten(), data_2.flatten(), pearson)
+    return concor
 
 
-def test_create_unique_file_dict_with_replacements():
-
-    from cpac_correlations_wf import create_unique_file_dict
-
-    filepaths = [
-      "/path/sub001_site1/centrality_outputs/_scan_rest_1/degree_centrality_weighted.nii.gz",
-      "/path/sub001_site1/centrality_outputs/_scan_rest_1/eigenvector_centrality_weighted.nii.gz",
-      "/path/sub002_site1/alff_to_standard_smooth/_scan_rest_1/file.nii.gz"
-    ]
-
-    output_folder = "/path"
-
-    # remove _site1 and replace with nothing
-    replacements = ["_site1,"]
-
-    # output dictionary should have dictionaries as values, which have tuples 
-    # as keys, where the tuple identifies the same file across different CPAC
-    # versions (and thus potentially different filepaths)
-    #   multiple dictionary levels to make it easy to pull up all of the
-    #   entries for one particular derivative
-    ref_output = {
-      'alff_to_standard_smooth':
-        {('alff_to_standard_smooth', 
-          '/sub002/alff_to_standard_smooth/_scan_rest_1/', '1'):
-            ['/path/sub002/alff_to_standard_smooth/_scan_rest_1/file.nii.gz']},
-      'centrality_outputs: degree': 
-        {('centrality_outputs: degree', 
-          '/sub001/centrality_outputs/_scan_rest_1/', '1'): 
-            ['/path/sub001/centrality_outputs/_scan_rest_1/degree_centrality_weighted.nii.gz']},
-      'centrality_outputs: eigenvector': 
-        {('centrality_outputs: eigenvector', 
-          '/sub001/centrality_outputs/_scan_rest_1/', '1'):
-            ['/path/sub001/centrality_outputs/_scan_rest_1/eigenvector_centrality_weighted.nii.gz']}
-    }
-
-    file_dict = create_unique_file_dict(filepaths, output_folder, replacements)
-
-    assert ref_output == file_dict
+def quick_corr_csv(csv_1, csv_2):
+    csv_1_lines = read_txt_file(csv_1)
+    csv_2_lines = read_txt_file(csv_2)
+    csv_1_data = parse_csv_data(csv_1_lines)
+    csv_2_data = parse_csv_data(csv_2_lines)
+    if csv_1_data.flatten().shape == csv_2_data.flatten().shape:
+        concor = correlate(csv_1_data, csv_2_data)
+    print(concor)
 
 
 def create_unique_file_dict(filepaths, output_folder_path, replacements=None):
@@ -317,65 +275,6 @@ def create_unique_file_dict(filepaths, output_folder_path, replacements=None):
     return files_dict
 
 
-def test_match_filepaths():
-
-    from cpac_correlations_wf import match_filepaths
-
-    old_files_dict = {
-      'alff_to_standard_smooth':
-        {('alff_to_standard_smooth', 
-          '/sub002/alff_to_standard_smooth/_scan_rest_1/', '1'):
-            ['/old_run/sub002/alff_to_standard_smooth/_scan_rest_1/file.nii.gz']},
-      'centrality_outputs: degree': 
-        {('centrality_outputs: degree', 
-          '/sub001/centrality_outputs/_scan_rest_1/', '1'): 
-            ['/old_run/sub001/centrality_outputs/_scan_rest_1/degree_centrality_weighted.nii.gz']},
-      'centrality_outputs: eigenvector': 
-        {('centrality_outputs: eigenvector', 
-          '/sub001/centrality_outputs/_scan_rest_1/', '1'):
-            ['/old_run/sub001/centrality_outputs/_scan_rest_1/eigenvector_centrality_weighted.nii.gz']}
-    }
-
-    new_files_dict = {
-      'alff_to_standard_smooth':
-        {('alff_to_standard_smooth', 
-          '/sub002/alff_to_standard_smooth/_scan_rest_1/', '1'):
-            ['/new_run/sub002/alff_to_standard_smooth/_scan_rest_1/file.nii.gz']},
-      'centrality_outputs: degree': 
-        {('centrality_outputs: degree', 
-          '/sub001/centrality_outputs/_scan_rest_1/', '1'): 
-            ['/new_run/sub001/centrality_outputs/_scan_rest_1/degree_centrality_weighted.nii.gz']},
-      'centrality_outputs: eigenvector': 
-        {('centrality_outputs: eigenvector', 
-          '/sub001/centrality_outputs/_scan_rest_1/', '1'):
-            ['/new_run/sub001/centrality_outputs/_scan_rest_1/eigenvector_centrality_weighted.nii.gz']}
-    }
-
-    # the output should be similar to the inputs, except the two input
-    # dictionaries have been merged
-    ref_output_dict = {
-      'alff_to_standard_smooth': 
-        {('alff_to_standard_smooth',
-          '/sub002/alff_to_standard_smooth/_scan_rest_1/', '1'): 
-            ['/old_run/sub002/alff_to_standard_smooth/_scan_rest_1/file.nii.gz',
-             '/new_run/sub002/alff_to_standard_smooth/_scan_rest_1/file.nii.gz']},
-      'centrality_outputs: degree': 
-        {('centrality_outputs: degree',
-          '/sub001/centrality_outputs/_scan_rest_1/', '1'): 
-            ['/old_run/sub001/centrality_outputs/_scan_rest_1/degree_centrality_weighted.nii.gz',
-             '/new_run/sub001/centrality_outputs/_scan_rest_1/degree_centrality_weighted.nii.gz']},
-      'centrality_outputs: eigenvector': 
-        {('centrality_outputs: eigenvector',
-          '/sub001/centrality_outputs/_scan_rest_1/', '1'): 
-            ['/old_run/sub001/centrality_outputs/_scan_rest_1/eigenvector_centrality_weighted.nii.gz',
-             '/new_run/sub001/centrality_outputs/_scan_rest_1/eigenvector_centrality_weighted.nii.gz']}
-    }
-
-    output_dict = match_filepaths(old_files_dict, new_files_dict)
-
-    assert ref_output_dict == output_dict
-
-
 def match_filepaths(old_files_dict, new_files_dict):
     """Returns a dictionary mapping each filepath from the first CPAC run to the
     second one, matched to derivative, strategy, and scan.
@@ -426,11 +325,6 @@ def match_filepaths(old_files_dict, new_files_dict):
     return matched_path_dict #, missing_in_old, missing_in_new
 
 
-def test_calculate_correlation_no_s3():
-
-    pass
-
-
 def calculate_correlation(args_tuple):
 
     import os
@@ -449,7 +343,7 @@ def calculate_correlation(args_tuple):
     local_dir = args_tuple[3]
     s3_creds = args_tuple[4]
 
-    print "Calculating correlation between %s and %s" % (old_path, new_path)
+    print("Calculating correlation between {0} and {1}".format(old_path, new_path))
 
     corr_tuple = None
 
@@ -506,34 +400,20 @@ def calculate_correlation(args_tuple):
         if ('roi_stats.csv' in old_path and 'roi_stats.csv' in new_path) or \
                 ('spatial_map_timeseries.txt' in old_path and 'spatial_map_timeseries.txt' in new_path) or \
                     ('.1D' in old_path and '.1D' in new_path):
-
             try:
-                old_csv = []
-                new_csv = []
-
-                with open(old_path, 'r') as f:
-                    old_rois = f.readlines()
-                with open(new_path, 'r') as f:
-                    new_rois = f.readlines()
-            except:
-                corr_tuple = ("file reading problem", old_path, new_path)
+                old_rois = read_txt_file(old_path)
+                new_rois = read_txt_file(new_path)
+            except Exception as e:
+                corr_tuple = ("file reading problem: {0}".format(e), 
+                              old_path, new_path)
                 return corr_tuple
 
             try:
-                for line in old_rois:
-                    if '#' not in line:
-                        new_row = [float(x.rstrip('\n')) for x in line.split('\t') if x != '']
-                        old_csv.append(new_row)
-
-                for line in new_rois:
-                    if '#' not in line:
-                        new_row = [float(x.rstrip('\n')) for x in line.split('\t') if x != '']
-                        new_csv.append(new_row)
-
-                data_1 = np.asarray(old_csv)
-                data_2 = np.asarray(new_csv)
-            except:
-                corr_tuple = ("file processing problem", old_path, new_path)
+                data_1 = parse_csv_data(old_rois)
+                data_2 = parse_csv_data(new_rois)
+            except Exception as e:
+                corr_tuple = ("file processing problem: {0}".format(e),
+                              old_path, new_path)
                 return corr_tuple
 
         else:
@@ -551,8 +431,7 @@ def calculate_correlation(args_tuple):
                     old_path_dir = old_path.split(os.path.basename(old_path))[0]
 
                     resampled_outfile = os.path.join(old_path_dir, \
-                                                     "resampled_%s" \
-                                                     % os.path.basename(old_path))
+                                                     "resampled_{0}".format(os.path.basename(old_path)))
 
                     if os.path.exists(resampled_outfile):
                         old_path = resampled_outfile
@@ -575,23 +454,24 @@ def calculate_correlation(args_tuple):
                 data_1 = nb.load(old_path).get_data()
                 data_2 = nb.load(new_path).get_data()
 
-            except:
-                corr_tuple = ("file reading problem", old_path, new_path)
+            except Exception as e:
+                corr_tuple = ("file reading problem: {0}".format(e), 
+                              old_path, new_path)
                 return corr_tuple
 
         ## set up and run the Pearson correlation and concordance correlation
         if data_1.flatten().shape == data_2.flatten().shape:
             try:
-                pearson = scipy.stats.pearsonr(data_1.flatten(), data_2.flatten())[0]
-                concor = concordance(data_1.flatten(), data_2.flatten(), pearson)
-            except:
-                corr_tuple = ("correlating problem", old_path, new_path)
+                concor = correlate(data_1, data_2)
+            except Exception as e:
+                corr_tuple = ("correlating problem: {0}".format(e), 
+                              old_path, new_path)
                 return corr_tuple
             if concor > 0.980:
                 corr_tuple = (category, [concor])
             else:
                 corr_tuple = (category, [concor], (old_path, new_path))
-            print "Success - %s" % str(concor)
+            print("Success - {0}".format(str(concor)))
         else:
             corr_tuple = ("different shape", old_path, new_path)
 
@@ -650,20 +530,42 @@ def organize_correlations(concor_dict):
             if word in key:
                 functionals[key] = concor_dict[key]
 
+    group = "concordance_registration_and_segmentation"
     if len(regCorrMap.values()) > 0:
-        corr_map_dict["correlations"]['concordance_registration_and_segmentation'] = regCorrMap
-
+        corr_map_dict["correlations"][group] = regCorrMap
+    else:
+        print("No values in {0}".format(group))
+ 
+    group = "concordance_native_space_outputs"
     if len(native_outputs.values()) > 0:
-        corr_map_dict["correlations"]['concordance_native_space_outputs'] = native_outputs
+        corr_map_dict["correlations"][group] = native_outputs
+    else:
+        print("No values in {0}".format(group))
 
+    group = "concordance_template_space_outputs"
     if len(template_outputs.values()) > 0:
-        corr_map_dict["correlations"]['concordance_template_space_outputs'] = template_outputs
+        corr_map_dict["correlations"][group] = template_outputs
+    else:
+        print("No values in {0}".format(group))
 
+    group = "concordance_functional_outputs"
     if len(functionals.values()) > 0:
-        corr_map_dict["correlations"]['concordance_functional_outputs'] = functionals
+        corr_map_dict["correlations"][group] = functionals
+    else:
+        print("No values in {0}".format(group))
 
     return corr_map_dict
 
+
+def quick_summary(corr_map_dct, output_dir):
+    for corr_group in corr_map_dct["correlations"].keys():
+        cat_dct = {}
+        lines = []
+        for output_type, corr_vec in dict(corr_map_dct["correlations"][corr_group]).iteritems():
+            lines.append("{0}: {1}".format(output_type, np.mean(np.asarray(corr_vec))))
+
+        write_txt_file(lines, os.path.join(output_dir, "average_{0}.txt".format(corr_group)))
+        
 
 def create_boxplot(corr_group, corr_group_name, pipeline_names=None,
                    current_dir=None):
@@ -705,24 +607,6 @@ def create_boxplot(corr_group, corr_group_name, pipeline_names=None,
 
     pyplot.savefig('%s.pdf' % output_filename, format='pdf', dpi=200, bbox_inches='tight')
     pyplot.close()
-
-
-def test_aggregate_correlations():
-
-    correlation_info_list = \
-        [("anatomical_brain", 1.0, 1.0), ("anatomical_brain", 0.95, 0.89), \
-         ("anatomical_brain", 0.67,0.50), ("alff_img", 0.98, 0.96), \
-         ("alff_img", 0.82, 0.80)]
-
-    ref_pearson_dict = \
-        {"anatomical_brain": [1.0, 0.95, 0.67], "alff_img": [0.98, 0.82]}
-    ref_concor_dict = \
-        {"anatomical_brain": [1.0, 0.89, 0.50], "alff_img": [0.96, 0.80]}
-
-    pearson_dict, concor_dict = aggregate_correlations(correlation_info_list)
-
-    assert ref_pearson_dict == pearson_dict
-    assert ref_concor_dict == concor_dict
 
 
 def main():
@@ -790,7 +674,7 @@ def main():
     else:
         replacements = None
 
-    output_dir = os.path.join(os.getcwd(), "correlations_%s" % args.run_name)
+    output_dir = os.path.join(os.getcwd(), "correlations_{0}".format(args.run_name))
 
     if not os.path.exists(output_dir):
         try:
@@ -798,33 +682,34 @@ def main():
         except:
             err = "\n\n[!] Could not create the output directory for the " \
                   "correlations. Do you have write permissions?\nAttempted " \
-                  "output directory: %s\n\n" % output_dir
+                  "output directory: {0}\n\n".format(output_dir)
             raise Exception(err)
 
     if args.corr_map:
+        # re-generate boxplots quickly if correlations are already calculated
+        # and organized
         corr_map_dict = read_pickle(args.corr_map)
 
         for corr_group_name in corr_map_dict["correlations"].keys():
             corr_group = corr_map_dict["correlations"][corr_group_name]
             create_boxplot(corr_group, corr_group_name,
                            corr_map_dict["pipeline_names"], output_dir)
-
     else:
+        # files from previous C-PAC version's output directory
+        output_pkl = os.path.join(output_dir, "{0}_old_files.p".format(pipeline_names[0]))
 
-        # last regression test
-        output_yml = os.path.join(output_dir, "%s_old_files.yml" % pipeline_names[0])
-
-        matched_path_file = os.path.join(output_dir, "matched_path_dict.yml")
+        matched_path_file = os.path.join(output_dir, "matched_path_dict.p")
 
         if os.path.exists(matched_path_file):
-            matched_path_dict = read_yml_file(matched_path_file)
+            # if the file paths from both output directories have already been matched
+            matched_path_dict = read_pickle(matched_path_file)
         else:
             matched_path_dict = None
 
-            if os.path.exists(output_yml):
-                print "Found output list YAML for pipeline %s, skipping output file" \
-                      "path parsing.." % pipeline_names[0]
-                old_files_dict = read_yml_file(output_yml)
+            if os.path.exists(output_pkl):
+                print("Found output list pickle for pipeline {0}, skipping output file" \
+                      "path parsing..".format(pipeline_names[0]))
+                old_files_dict = read_pickle(output_pkl)
             else:
                 if args.s3_creds:
                     old_files_list = pull_NIFTI_file_list_from_s3(old_outputs_path, args.s3_creds)
@@ -834,15 +719,15 @@ def main():
                 old_files_dict = create_unique_file_dict(old_files_list, \
                     old_outputs_path, replacements)
 
-                write_yml_file(old_files_dict, output_yml)
+                write_pickle(old_files_dict, output_pkl)
 
-            # this regression test
-            output_yml = os.path.join(output_dir, "%s_new_files.yml" % pipeline_names[1])
+            # files from new C-PAC version's output directory
+            output_pkl = os.path.join(output_dir, "{0}_new_files.p".format(pipeline_names[1]))
 
-            if os.path.exists(output_yml):
-                print "Found output list YAML for pipeline %s, skipping output file" \
-                      "path parsing.." % pipeline_names[1]
-                new_files_dict = read_yml_file(output_yml)
+            if os.path.exists(output_pkl):
+                print("Found output list pickle for pipeline {0}, skipping output file" \
+                      "path parsing..".format(pipeline_names[1]))
+                new_files_dict = read_pickle(output_pkl)
             else:
                 if args.s3_creds:
                     new_files_list = pull_NIFTI_file_list_from_s3(new_outputs_path, args.s3_creds)
@@ -852,76 +737,71 @@ def main():
                 new_files_dict = create_unique_file_dict(new_files_list, \
                     new_outputs_path, replacements)
 
-                write_yml_file(new_files_dict, output_yml)
+                write_pickle(new_files_dict, output_pkl)
 
             matched_path_dict = match_filepaths(old_files_dict, new_files_dict)
 
-            write_yml_file(matched_path_dict, matched_path_file)
+            write_pickle(matched_path_dict, matched_path_file)
 
         all_corr_dict = {}
-        full_corr_dict = {}
         sub_opt_dct = {}
 
         args_list = []
 
         # load full corr yaml dict
-        full_corr_file = os.path.join(output_dir, "full_corr_dict.yml")
+        all_corr_file = os.path.join(output_dir, "all_corr_dct.p")
 
-        if os.path.exists(full_corr_file):
-            full_corr_dict = read_yml_file(full_corr_file)
+        if os.path.exists(all_corr_file):
+            # if correlations are already calculated
+            all_corr_dict = read_pickle(all_corr_file)
+        else:
+            for category in matched_path_dict.keys():
+                for file_id in matched_path_dict[category].keys():
 
-        for category in matched_path_dict.keys():
+                    #if file_id in full_corr_dict.keys():
+                    #    if file_id[0] not in all_corr_dict.keys():
+                    #        all_corr_dict[file_id[0]] = full_corr_dict[file_id]
+                    #    continue
 
-            for file_id in matched_path_dict[category].keys():
+                    old_path = matched_path_dict[category][file_id][0]
+                    new_path = matched_path_dict[category][file_id][1]
 
-                #if file_id in full_corr_dict.keys():
-                #    if file_id[0] not in all_corr_dict.keys():
-                #        all_corr_dict[file_id[0]] = full_corr_dict[file_id]
-                #    continue
+                    #if (".nii" not in old_path) or (".nii" not in new_path):
+                    #    print "Skipping %s and %s" % (old_path, new_path)
+                    #    continue
 
-                old_path = matched_path_dict[category][file_id][0]
-                new_path = matched_path_dict[category][file_id][1]
+                    args_list.append((category, old_path, new_path, output_dir, args.s3_creds))
 
-                #if (".nii" not in old_path) or (".nii" not in new_path):
-                #    print "Skipping %s and %s" % (old_path, new_path)
-                #    continue
+            print("\nNumber of correlations to calculate: {0}\n".format(len(args_list)))
 
-                args_list.append((category, old_path, new_path, output_dir, args.s3_creds))
+            from cpac_correlations_wf import calculate_correlation
 
-        print "\nNumber of correlations to calculate: %d\n" % len(args_list)
+            p = Pool(args.num_cores)
+            corr_tuple_list = p.map(calculate_correlation, args_list)
 
-        from cpac_correlations_wf import calculate_correlation
+            for corr_tuple in corr_tuple_list:
+                if corr_tuple[0] not in all_corr_dict.keys():
+                    all_corr_dict[corr_tuple[0]] = []
+                all_corr_dict[corr_tuple[0]] += corr_tuple[1]
+                print("added- {0}:{1}".format(corr_tuple[0], corr_tuple[1]))
 
-        p = Pool(args.num_cores)
-        corr_tuple_list = p.map(calculate_correlation, args_list)
+                if len(corr_tuple) > 2:
+                    if corr_tuple[0] not in sub_opt_dct:
+                        sub_opt_dct[corr_tuple[0]] = []
+                    try:
+                        sub_opt_dct[corr_tuple[0]].append("{0}:\n{1}\n{2}\n\n".format(corr_tuple[1][0], corr_tuple[2][0], corr_tuple[2][1]))
+                    except TypeError:
+                        pass
 
-        for corr_tuple in corr_tuple_list:
-
-            if corr_tuple[0] not in all_corr_dict.keys():
-                all_corr_dict[corr_tuple[0]] = []
-
-            all_corr_dict[corr_tuple[0]] += corr_tuple[1]
-
-            if len(corr_tuple) > 2:
-                if corr_tuple[0] not in sub_opt_dct:
-                    sub_opt_dct[corr_tuple[0]] = []
-                try:
-                    sub_opt_dct[corr_tuple[0]].append("{0}:\n{1}\n{2}\n\n".format(corr_tuple[1][0], corr_tuple[2][0], corr_tuple[2][1]))
-                except TypeError:
-                    pass
-                
-            #if file_id not in full_corr_dict.keys():
-            #    full_corr_dict[file_id] = []
-
-            #full_corr_dict[file_id].append(corr_tuple[1])
-
-        #write_yml_file(full_corr_dict, full_corr_file)
+            write_pickle(all_corr_dict, all_corr_file)
 
         # let's go
         corr_map_dict = organize_correlations(all_corr_dict)
         corr_map_dict["pipeline_names"] = pipeline_names
 
         write_pickle(corr_map_dict, os.path.join(output_dir, "corr_map_dict.p"))
+
+        quick_summary(corr_map_dict, output_dir)
 
         if sub_opt_dct:
             write_yml_file(sub_opt_dct, os.path.join(output_dir, "sub_optimal.yml"))
