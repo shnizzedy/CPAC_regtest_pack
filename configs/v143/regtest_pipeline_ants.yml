@@ -324,7 +324,7 @@ TR :  None
 runFunctional: [1]
 
 # Interpolate voxel time courses so they are sampled at the same time points.
-slice_timing_correction :  [1]
+slice_timing_correction :  [0]
 
 
 # Acquisition strategy for acquiring image slices.
@@ -417,7 +417,7 @@ identityMatrix :  /usr/share/fsl/5.0/etc/flirtsch/ident.mat
 
 
 # Run ICA-AROMA de-noising.
-runICA :  [1]
+runICA :  [1, 0]
 
 
 # Types of denoising strategy: i)nonaggr-patial component regression, ii)aggr-aggressive denoising
@@ -456,32 +456,6 @@ Regressors :
      
    GlobalSignal:
      summary: Mean
-
-   PolyOrt:
-    degree: 2
-
-   Bandpass:
-     bottom_frequency: 0.01
-     top_frequency: 0.1
-
- - Motion:
-     include_delayed: true
-     include_squared: true
-     include_delayed_squared: true
- 
-   aCompCor:
-     summary:
-       method: DetrendPC
-       components: 5
-     tissues:
-       - WhiteMatter
-       - CerebrospinalFluid
-     extraction_resolution: 2
-
-   CerebrospinalFluid:
-     summary: Mean
-     extraction_resolution: 2
-     erode_mask: true
 
    PolyOrt:
     degree: 2
@@ -617,7 +591,7 @@ degCorrelationThreshold :  0.001
 
 
 # Enable/Disable eigenvector centrality by selecting the connectivity weights
-eigWeightOptions :  [True, True]
+eigWeightOptions :  [False, True]
 
 
 # Select the type of threshold used when creating the eigenvector centrality adjacency matrix.

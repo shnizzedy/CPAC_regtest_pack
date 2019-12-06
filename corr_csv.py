@@ -12,19 +12,11 @@ def read_txt_file(txt_file):
     return strings
 
 
-def parse_csv_data(csv_lines):
-    parsed_lines = []
-    for line in csv_lines:
-        if '#' not in line:
-            new_row = [float(x.rstrip('\n')) for x in line.split('\t') if x != '']
-            parsed_lines.append(new_row)
-        csv_np_data = np.asarray(parsed_lines)
-
-    return csv_np_data
-
-
-def read_csv_into_df(csv_file, header_row):
-    csvdf = pd.read_csv(csv_file, header=header_row, delimiter="\t")
+def read_csv_into_df(csv_file, header_row=None):
+    if header_row:
+        csvdf = pd.read_csv(csv_file, header=header_row, delimiter="\t", comment="#")
+    else:
+        csvdf = pd.read_csv(csv_file, delimiter="\t", comment="#")  
     return csvdf
 
 
@@ -59,8 +51,8 @@ def correlate(data_1, data_2):
 
 
 def quick_corr_csv(csv_1, csv_2):
-    csv_1_data = read_csv_into_df(csv_1, 2)
-    csv_2_data = read_csv_into_df(csv_2, 2)
+    csv_1_data = read_csv_into_df(csv_1)
+    csv_2_data = read_csv_into_df(csv_2)
     for col, col2 in zip(csv_1_data, csv_2_data):
         try:
             concor = correlate(csv_1_data[col], csv_2_data[col2])

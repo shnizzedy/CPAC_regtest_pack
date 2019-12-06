@@ -54,7 +54,7 @@ def gather_filepaths(output_folder_path):
         # loops through every file in the directory
         for filename in files:
             # checks if the file is a nifti (.nii.gz)
-            if '.nii' in filename or '.csv' in filename or '.txt' in filename or '.1D' in filename:
+            if '.nii' in filename: # or '.csv' in filename or '.txt' in filename or '.1D' in filename:
                 filepaths.append(os.path.join(root, filename))
 
     if len(filepaths) == 0:
@@ -406,6 +406,7 @@ def calculate_correlation(args_tuple):
             except Exception as e:
                 corr_tuple = ("file reading problem: {0}".format(e), 
                               old_path, new_path)
+                print(str(corr_tuple))
                 return corr_tuple
 
             try:
@@ -414,6 +415,7 @@ def calculate_correlation(args_tuple):
             except Exception as e:
                 corr_tuple = ("file processing problem: {0}".format(e),
                               old_path, new_path)
+                print(str(corr_tuple))
                 return corr_tuple
 
         else:
@@ -457,6 +459,7 @@ def calculate_correlation(args_tuple):
             except Exception as e:
                 corr_tuple = ("file reading problem: {0}".format(e), 
                               old_path, new_path)
+                print(str(corr_tuple))
                 return corr_tuple
 
         ## set up and run the Pearson correlation and concordance correlation
@@ -466,6 +469,7 @@ def calculate_correlation(args_tuple):
             except Exception as e:
                 corr_tuple = ("correlating problem: {0}".format(e), 
                               old_path, new_path)
+                print(str(corr_tuple))
                 return corr_tuple
             if concor > 0.980:
                 corr_tuple = (category, [concor])
@@ -474,15 +478,19 @@ def calculate_correlation(args_tuple):
             print("Success - {0}".format(str(concor)))
         else:
             corr_tuple = ("different shape", old_path, new_path)
+            print(str(corr_tuple))
 
     else:
         if not os.path.exists(old_path):
             corr_tuple = ("file doesn't exist", [old_path], None)
+            print(str(corr_tuple))
         if not os.path.exists(new_path):
             if not corr_tuple:
                 corr_tuple = ("file doesn't exist", [new_path], None)
+                print(str(corr_tuple))
             else:
                 corr_tuple = ("file doesn't exist", old_path, new_path)
+                print(str(corr_tuple))
 
     return corr_tuple
 
@@ -778,7 +786,10 @@ def main():
 
             p = Pool(args.num_cores)
             corr_tuple_list = p.map(calculate_correlation, args_list)
+            p.close()
+            p.join()
 
+            print("\nCorrelations done.\n")
             for corr_tuple in corr_tuple_list:
                 if corr_tuple[0] not in all_corr_dict.keys():
                     all_corr_dict[corr_tuple[0]] = []
