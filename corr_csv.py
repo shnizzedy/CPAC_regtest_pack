@@ -51,8 +51,9 @@ def correlate(data_1, data_2):
 
 
 def quick_corr_csv(csv_1, csv_2):
-    csv_1_data = read_csv_into_df(csv_1)
-    csv_2_data = read_csv_into_df(csv_2)
+    csv_1_data = read_csv_into_df(csv_1, None)
+    csv_2_data = read_csv_into_df(csv_2, None)
+
     for col, col2 in zip(csv_1_data, csv_2_data):
         try:
             concor = correlate(csv_1_data[col], csv_2_data[col2])
