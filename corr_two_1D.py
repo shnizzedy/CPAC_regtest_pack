@@ -2,17 +2,29 @@ import sys
 import scipy
 from scipy import stats
 import numpy as np
+import pandas as pd
 
-oned_one = str(sys.argv[1])
-oned_two = str(sys.argv[2])
+oned_one_file = str(sys.argv[1])
+oned_two_file = str(sys.argv[2])
 
-def parse_oned_file(oned_file):
-    with open(oned_file, 'r') as f:
-        file_lines = f.readlines()
-        file_lines = [float(x.rstrip('\n')) for x in file_lines]
-    return file_lines
+with open(oned_one_file, 'r') as f:
+    lines = f.readlines()
 
-fileone_lines = parse_oned_file(oned_one)
-filetwo_lines = parse_oned_file(oned_two)
+line_idx = 0
+delimiter = ','
+for line in lines:
+    if '#' in line:
+        line_idx += 1
+    else:
+        if ',' in line:
+            delimiter = ','
+        elif '\t' in line:
+            delimiter = '\t'
+        break
 
-print(scipy.stats.pearsonr(fileone_lines, filetwo_lines)[0])
+oned_one = pd.read_csv(oned_one_file, delimiter=delimiter, header=line_idx-1).dropna(axis=1)
+oned_two = pd.read_csv(oned_two_file, delimiter=delimiter, header=line_idx-1).dropna(axis=1)
+
+corrs = np.asarray([scipy.stats.pearsonr(oned_one[x], oned_two[x])[0] for x in oned_one.columns]).mean()
+print(corrs)
+

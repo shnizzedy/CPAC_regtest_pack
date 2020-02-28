@@ -51,17 +51,23 @@ def correlate(data_1, data_2):
 
 
 def quick_corr_csv(csv_1, csv_2):
-    csv_1_data = read_csv_into_df(csv_1, None)
-    csv_2_data = read_csv_into_df(csv_2, None)
+    csv_1_data = read_csv_into_df(csv_1)
+    csv_2_data = read_csv_into_df(csv_2)
+
+    concors = []
 
     for col, col2 in zip(csv_1_data, csv_2_data):
         try:
             concor = correlate(csv_1_data[col], csv_2_data[col2])
+            concors.append(concor)
             print("{0}: {1}".format(col2, concor))
         except KeyError:
             print("different name now - {0}".format(col))
     else:
         print("Data not same shape")
+
+    print("\nAverage concordance correlation of all columns:")
+    print(np.asarray(concors).mean())
 
 
 def main():

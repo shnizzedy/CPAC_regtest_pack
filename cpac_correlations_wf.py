@@ -4,6 +4,7 @@ import os
 import numpy as np
 import scipy
 from scipy import stats
+import pandas as pd
 
 
 def read_yml_file(yml_filepath):
@@ -54,7 +55,8 @@ def gather_filepaths(output_folder_path):
         # loops through every file in the directory
         for filename in files:
             # checks if the file is a nifti (.nii.gz)
-            if '.nii' in filename: # or '.csv' in filename or '.txt' in filename or '.1D' in filename:
+            if '.nii' in filename or '.csv' in filename or '.txt' in filename \
+                    or '.1D' in filename:
                 filepaths.append(os.path.join(root, filename))
 
     if len(filepaths) == 0:
@@ -171,6 +173,41 @@ def quick_corr_csv(csv_1, csv_2):
     if csv_1_data.flatten().shape == csv_2_data.flatten().shape:
         concor = correlate(csv_1_data, csv_2_data)
     print(concor)
+
+
+def correlate_two_nifti_timeseries(ts1_data, ts2_data, shape):
+    ts_corrs = []
+    for i in range(0, shape[0]):
+        for j in range(0, shape[1]):
+            for k in range(0, shape[2]):
+                ts_corrs.append(scipy.stats.pearsonr(ts1_data[i][j][k],
+                                                     ts2_data[i][j][k])[0])
+    ts_corrs = np.asarray(ts_corrs)
+    ts_corr = ts_corrs[~np.isnan(ts_corrs)].mean()
+    return ts_corr
+
+
+def correlate_text_based(txt1, txt2):
+    with open(txt1, 'r') as f:
+        lines = f.readlines()
+
+    line_idx = 0
+    delimiter = ','
+    for line in lines:
+        if '#' in line:
+            line_idx += 1
+        else:
+            if ',' in line:
+                delimiter = ','
+            elif '\t' in line:
+                delimiter = '\t'
+            break
+
+    oned_one = pd.read_csv(txt1, delimiter=delimiter, header=line_idx-1).dropna(axis=1)
+    oned_two = pd.read_csv(txt2, delimiter=delimiter, header=line_idx-1).dropna(axis=1)
+
+    corr = np.asarray([concordance(oned_one[x], oned_two[x], scipy.stats.pearsonr(oned_one[x], oned_two[x])[0]) for x in oned_one.columns]).mean()
+    return corr
 
 
 def create_unique_file_dict(filepaths, output_folder_path, replacements=None):
@@ -365,9 +402,8 @@ def calculate_correlation(args_tuple):
                 os.makedirs(new_local_path)
 
         except Exception as e:
-            err = "\n\nLocals: %s\n\n[!] Could not create the local S3 " \
-                  "download directory.\n\nError details: %s\n\n" \
-                  % (locals(), e)
+            err = "\n\nLocals: {0}\n\n[!] Could not create the local S3 " \
+                  "download directory.\n\nError details: {1}\n\n".format((locals(), e))
             raise Exception(e)
 
         try:
@@ -376,10 +412,12 @@ def calculate_correlation(args_tuple):
             else:
                 old_path = old_local_file
         except Exception as e:
-            err = "\n\nLocals: %s\n\n[!] Could not download the files from " \
-                  "the S3 bucket. \nS3 filepath: %s\nLocal destination: %s" \
-                  "\nS3 creds: %s\n\nError details: %s\n\n" \
-                  % (locals(), old_path, old_local_path, s3_creds, e)
+            err = "\n\nLocals: {0}\n\n[!] Could not download the files from " \
+                  "the S3 bucket. \nS3 filepath: {1}\nLocal destination: {2}" \
+                  "\nS3 creds: {3}\n\nError details: {4}\n\n".format(locals(), 
+                                                                     old_path, 
+                                                                     old_local_path, 
+                                                                     s3_creds, e)
             raise Exception(e)
 
         try:
@@ -388,70 +426,40 @@ def calculate_correlation(args_tuple):
             else:
                 new_path = new_local_file
         except Exception as e:
-            err = "\n\nLocals: %s\n\n[!] Could not download the files from " \
-                 "the S3 bucket. \nS3 filepath: %s\nLocal destination: %s" \
-                  "\nS3 creds: %s\n\nError details: %s\n\n" \
-                  % (locals(), new_path, new_local_path, s3_creds, e)
+            err = "\n\nLocals: {0}\n\n[!] Could not download the files from " \
+                 "the S3 bucket. \nS3 filepath: {1}\nLocal destination: {2}" \
+                  "\nS3 creds: {3}\n\nError details: {4}\n\n".format(locals(), 
+                                                                     new_path, 
+                                                                     new_local_path, 
+                                                                     s3_creds, e)
             raise Exception(e)
 
     ## nibabel to pull the data from the re-assembled file paths
     if os.path.exists(old_path) and os.path.exists(new_path):
 
-        if ('roi_stats.csv' in old_path and 'roi_stats.csv' in new_path) or \
+        if ('.csv' in old_path and '.csv' in new_path) or \
                 ('spatial_map_timeseries.txt' in old_path and 'spatial_map_timeseries.txt' in new_path) or \
-                    ('.1D' in old_path and '.1D' in new_path):
+                    ('.1D' in old_path and '.1D' in new_path) or \
+                        ('.tsv' in old_path and '.tsv' in new_path):
             try:
-                old_rois = read_txt_file(old_path)
-                new_rois = read_txt_file(new_path)
+                concor = correlate_text_based(old_path, new_path)
+                corr_tuple = (category, [concor], (old_path, new_path))
             except Exception as e:
                 corr_tuple = ("file reading problem: {0}".format(e), 
                               old_path, new_path)
                 print(str(corr_tuple))
-                return corr_tuple
 
-            try:
-                data_1 = parse_csv_data(old_rois)
-                data_2 = parse_csv_data(new_rois)
-            except Exception as e:
-                corr_tuple = ("file processing problem: {0}".format(e),
-                              old_path, new_path)
-                print(str(corr_tuple))
-                return corr_tuple
+            return corr_tuple
 
         else:
             try:
-                raw_file_img = nb.load(old_path)
-                raw_file_hdr = raw_file_img.get_header()
-                roi_mask_img = nb.load(new_path)
-                roi_mask_hdr = roi_mask_img.get_header()
+                old_file_img = nb.load(old_path)
+                old_file_hdr = old_file_img.header
+                new_file_img = nb.load(new_path)
+                new_file_hdr = new_file_img.header
 
-                raw_file_dims = raw_file_hdr.get_zooms()
-                roi_mask_dims = roi_mask_hdr.get_zooms()
-  
-                if raw_file_dims != roi_mask_dims:
-
-                    old_path_dir = old_path.split(os.path.basename(old_path))[0]
-
-                    resampled_outfile = os.path.join(old_path_dir, \
-                                                     "resampled_{0}".format(os.path.basename(old_path)))
-
-                    if os.path.exists(resampled_outfile):
-                        old_path = resampled_outfile
-                    else:
-                        resample_str = ["flirt", "-in", old_path, "-ref", new_path, \
-                                        "-applyisoxfm", str(roi_mask_dims[0]), "-interp", \
-                                        "trilinear", "-out", resampled_outfile]
-
-                        try:
-                            retcode = subprocess.check_output(resample_str)
-                        except Exception as e:
-                            err = "\n\n[!] Something went wrong with running FSL FLIRT for " \
-                                  "the purpose of resampling the custom ROI mask to match " \
-                                  "the original output file's resolution.\n\nCustom ROI " \
-                                  "mask file: %s\n\nError details: %s\n\n" % (roi_mask, e)
-                            raise Exception(err)
-
-                        old_path = resampled_outfile
+                old_file_dims = old_file_hdr.get_zooms()
+                new_file_dims = new_file_hdr.get_zooms()
 
                 data_1 = nb.load(old_path).get_data()
                 data_2 = nb.load(new_path).get_data()
@@ -465,7 +473,11 @@ def calculate_correlation(args_tuple):
         ## set up and run the Pearson correlation and concordance correlation
         if data_1.flatten().shape == data_2.flatten().shape:
             try:
-                concor = correlate(data_1, data_2)
+                if len(old_file_dims) > 3:
+                    concor = correlate_two_nifti_timeseries(data_1, data_2, 
+                                                            old_file_img.shape)
+                else:
+                    concor = correlate(data_1, data_2)
             except Exception as e:
                 corr_tuple = ("correlating problem: {0}".format(e), 
                               old_path, new_path)
@@ -508,9 +520,9 @@ def organize_correlations(concor_dict):
     corr_map_dict = {}
     corr_map_dict["correlations"] = {}
 
-    derivs = ['alff', 'dr_tempreg', 'reho', 'sca_roi', 'timeseries']
+    derivs = ['alff', 'dr_tempreg', 'reho', 'sca_roi', 'timeseries', 'ndmg']
     anats = ['anatomical', 'seg']
-    funcs = ['functional', 'motion_correct', 'slice']
+    funcs = ['functional', 'motion_correct', 'slice', 'displacement']
 
     for key in concor_dict:
 
@@ -604,16 +616,17 @@ def create_boxplot(corr_group, corr_group_name, pipeline_names=None,
     pyplot.xticks(range(1,(len(corr_group)+1)),labels,rotation=85)
     pyplot.margins(0.5,1.0)
     pyplot.xlabel('Derivatives')
-    pyplot.title('Correlations between %s and %s\n '
-                 '( %s )' % (pipeline_names[0], pipeline_names[1],
-                             corr_group_name))
+    pyplot.title('Correlations between {0} and {1}\n '
+                 '( {2} )'.format(pipeline_names[0], 
+                                  pipeline_names[1],
+                                  corr_group_name))
 
     output_filename = os.path.join(current_dir,
                                    (corr_group_name + "_" +
                                     pipeline_names[0] +
                                     "_and_" + pipeline_names[1]))
 
-    pyplot.savefig('%s.pdf' % output_filename, format='pdf', dpi=200, bbox_inches='tight')
+    pyplot.savefig('{0}.pdf'.format(output_filename), format='pdf', dpi=200, bbox_inches='tight')
     pyplot.close()
 
 

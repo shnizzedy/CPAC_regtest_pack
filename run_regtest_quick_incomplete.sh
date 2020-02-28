@@ -14,4 +14,15 @@
 # this is meant entirely to get very quick numbers of the big basics
 # this is NOT a full regression test meant for release validation
 
-sudo docker run -v /home/ubuntu:/home/ubuntu -v /media/ebs/CPAC_regtest_pack:/media/ebs/CPAC_regtest_pack -v /media/ebs/$2/ants:/output $1 /home/ubuntu /output participant --data_config_file /media/ebs/CPAC_regtest_pack/data_config_regtest_quick_incomplete.yml --pipeline_file /media/ebs/CPAC_regtest_pack/configs/$2/regtest_pipeline_ants.yml --n_cpus 4 --pipeline_override "num_ants_threads: 3" --pipeline_override "numParticipantsAtOnce: 4" --save_working_dir
+sudo docker run \
+    -v /home/ubuntu:/home/ubuntu \
+    -v /media/ebs/CPAC_regtest_pack:/media/ebs/CPAC_regtest_pack \
+    -v /media/ebs/$2/ants:/output \
+    $1 /home/ubuntu /output participant \
+    --data_config_file /media/ebs/CPAC_regtest_pack/data_config_regtest_quick_incomplete.yml \
+    --pipeline_file /media/ebs/CPAC_regtest_pack/configs/$2/pipeline_config_benchmark-ANTS.yml \
+    --n_cpus 4 \
+    --mem_gb 12 \
+    --pipeline_override "num_ants_threads: 3" \
+    --pipeline_override "numParticipantsAtOnce: 4" \
+    --save_working_dir
