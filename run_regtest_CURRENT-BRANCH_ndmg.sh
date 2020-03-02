@@ -26,7 +26,7 @@ sudo docker run \
     -v $repo/dev/docker_data/default_pipeline.yml:/code/default_pipeline.yml \
     -v /home/ubuntu:/home/ubuntu \
     -v /media/ebs/CPAC_regtest_pack:/media/ebs/CPAC_regtest_pack \
-    -v /media/ebs/ndmg_$run_name/ants:/output \
+    -v /media/ebs/runs/ndmg_$run_name:/output \
     $docker_image /home/ubuntu /output participant \
     --save_working_dir \
     --data_config_file /media/ebs/CPAC_regtest_pack/data_config_regtest_quick_incomplete.yml \

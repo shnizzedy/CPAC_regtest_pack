@@ -670,6 +670,10 @@ def main():
                              "correlations, which can be provided if you "
                              "only want to generate the box plots again")
 
+    parser.add_argument("--working_dir", type=bool, default=False,
+                        help="if you are correlating two working directories " \
+                             "of a single participant to check intermediates")
+
     args = parser.parse_args()
 
     # run it!
@@ -790,8 +794,10 @@ def main():
                     #if (".nii" not in old_path) or (".nii" not in new_path):
                     #    print "Skipping %s and %s" % (old_path, new_path)
                     #    continue
-
-                    args_list.append((category, old_path, new_path, output_dir, args.s3_creds))
+                    if args.working_dir:
+                        args_list.append((file_id, old_path, new_path, output_dir, args.s3_creds))
+                    else:
+                        args_list.append((category, old_path, new_path, output_dir, args.s3_creds))
 
             print("\nNumber of correlations to calculate: {0}\n".format(len(args_list)))
 
@@ -819,21 +825,36 @@ def main():
 
             write_pickle(all_corr_dict, all_corr_file)
 
-        # let's go
-        corr_map_dict = organize_correlations(all_corr_dict)
-        corr_map_dict["pipeline_names"] = pipeline_names
+        if args.working_dir:
+            sorted_vals = []
+            sorted_keys = sorted(all_corr_dict, key=all_corr_dict.get)
+            for key in sorted_keys:
+                if 'file reading problem:' in key or 'different shape' in key or 'correlating problem' in key:
+                    continue
+                else:
+                    sorted_vals.append("{0}: {1}".format(all_corr_dict[key], key))
+            working_corrs_file = os.path.join(output_dir, "working_corrs.txt")
+            with open(working_corrs_file, 'wt') as f:
+                for line in sorted_vals:
+                    f.write(line)
+                    f.write("\n")
 
-        write_pickle(corr_map_dict, os.path.join(output_dir, "corr_map_dict.p"))
+        else:
+            # let's go
+            corr_map_dict = organize_correlations(all_corr_dict)
+            corr_map_dict["pipeline_names"] = pipeline_names
 
-        quick_summary(corr_map_dict, output_dir)
+            write_pickle(corr_map_dict, os.path.join(output_dir, "corr_map_dict.p"))
+            
+            quick_summary(corr_map_dict, output_dir)
 
-        if sub_opt_dct:
-            write_yml_file(sub_opt_dct, os.path.join(output_dir, "sub_optimal.yml"))
+            if sub_opt_dct:
+                write_yml_file(sub_opt_dct, os.path.join(output_dir, "sub_optimal.yml"))
 
-        for corr_group_name in corr_map_dict["correlations"].keys():
-            corr_group = corr_map_dict["correlations"][corr_group_name]
-            create_boxplot(corr_group, corr_group_name,
-                           corr_map_dict["pipeline_names"], output_dir)
+            for corr_group_name in corr_map_dict["correlations"].keys():
+                corr_group = corr_map_dict["correlations"][corr_group_name]
+                create_boxplot(corr_group, corr_group_name,
+                               corr_map_dict["pipeline_names"], output_dir)
 
 
 if __name__ == "__main__":

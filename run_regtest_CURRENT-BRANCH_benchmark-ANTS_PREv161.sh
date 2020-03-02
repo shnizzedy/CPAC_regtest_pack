@@ -27,11 +27,15 @@ sudo docker run \
     -v /home/ubuntu:/home/ubuntu \
     -v /media/ebs/CPAC_regtest_pack:/media/ebs/CPAC_regtest_pack \
     -v /media/ebs/runs/benchmark-ANTS_$run_name:/output \
+    -v /media/ebs/runs/benchmark-ANTS_v161a-hotfix/cpac_pipeline_config_2020-02-28T23-28-04Z.yml:/configs/pipe.yml \
     $docker_image /home/ubuntu /output participant \
     --save_working_dir \
     --data_config_file /media/ebs/CPAC_regtest_pack/data_config_regtest_quick_incomplete.yml \
-    --preconfig benchmark-ANTS \
+    --pipeline_file /configs/pipe.yml \
     --n_cpus 4 \
     --mem_gb 12 \
     --pipeline_override "num_ants_threads: 3" \
     --pipeline_override "numParticipantsAtOnce: 4"
+
+
+    #--preconfig benchmark-ANTS \
