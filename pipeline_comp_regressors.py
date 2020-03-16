@@ -8,7 +8,7 @@ import scipy.io as sio
 from scipy.stats import pearsonr
 from nipype.interfaces import afni, fsl
 
-from defaults import motion_list, regressor_list
+from configs.defaults import motion_list, regressor_list
 
 
 def main(argv):

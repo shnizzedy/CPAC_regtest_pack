@@ -11,14 +11,8 @@ from matplotlib import pyplot as plt
 from scipy import io as sio
 from warnings import filterwarnings
 
-if __package__ is None or __package__ == '':
-    import defaults
-
-    from subjects import generate_subject_list_for_range
-
-else:
-    from . import defaults
-    from .subjects import generate_subject_list_for_range
+from configs import defaults
+from configs.subjects import generate_subject_list_for_range
 
 filterwarnings(
     "ignore",

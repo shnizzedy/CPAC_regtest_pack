@@ -9,49 +9,9 @@ from afni_python.lib_afni1D import Afni1D
 from scipy.stats import pearsonr
 from tabulate import tabulate
 
-from defaults import motion_list, regressor_list
-from subjects import fmriprep_sub
+from configs.defaults import feature_headers, motion_list, regressor_list
+from configs.subjects import fmriprep_sub
 
-feature_headers = {
-    'GS': {
-        'name': 'global signal regression',
-        'link': 'https://fcp-indi.github.io/docs/user/nuisance.html#'
-                'global-signal-regression',
-        'C-PAC': 'GlobalSignalMean0',
-        'fmriprep': 'global_signal'
-    },
-    'CSF': {
-        'name': 'mean cerebrospinal fluid',
-        'link': 'https://fcp-indi.github.io/docs/user/nuisance.html#'
-                'mean-white-matter-csf',
-        'C-PAC': 'CerebrospinalFluidMean0',
-        'fmriprep': 'csf'
-    },
-    'WM': {
-        'name': 'mean white matter',
-        'link': 'https://fcp-indi.github.io/docs/user/nuisance.html#'
-                'mean-white-matter-csf',
-        'C-PAC': 'WhiteMatterMean0',
-        'fmriprep': 'white_matter'
-    },
-    'aCompCor': {
-        'name': 'aCompCor',
-        'link': 'https://fcp-indi.github.io/docs/user/nuisance.html#acompcor',
-        'C-PAC': 'aCompCorPC',
-        'fmriprep': 'aCompCor_comp_cor_0'
-    },
-    'tCompCor': {
-        'name': 'tCompCor',
-        'link': 'https://fcp-indi.github.io/docs/user/nuisance.html#tcompcor',
-        'C-PAC': 'tCompCorPC',
-        'fmriprep': 'tCompCor_comp_cor_0'
-    },
-    'FD': {
-        'name': 'framewise displacement',
-        'link': 'https://fcp-indi.github.io/docs/user/nuisance.html#'
-                'regression-of-motion-parameters'
-    }
-}
 sorted_keys = list(feature_headers.keys())
 sorted_keys.sort(key=str.lower)
 feat_def_table = tabulate(
