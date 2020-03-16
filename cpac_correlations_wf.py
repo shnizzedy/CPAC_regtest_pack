@@ -30,7 +30,7 @@ def read_txt_file(txt_file):
 def write_txt_file(text_lines, out_filepath):
     with open(out_filepath, "wt") as f:
         for line in text_lines:
-            print >>f, line, "\n"
+            print(line, "\n", file=f)
 
 
 def read_pickle(pickle_file):
@@ -341,7 +341,8 @@ def match_filepaths(old_files_dict, new_files_dict):
                         matched_path_dict[key] = {}
 
                     matched_path_dict[key][file_id] = \
-                        old_files_dict[key][file_id] + new_files_dict[key][file_id]
+                        old_files_dict[key][file_id] + \
+                        new_files_dict[key][file_id]
 
                 else:
                     missing_in_old.append(file_id)#new_files_dict[key][file_id])
@@ -380,7 +381,9 @@ def calculate_correlation(args_tuple):
     local_dir = args_tuple[3]
     s3_creds = args_tuple[4]
 
-    print("Calculating correlation between {0} and {1}".format(old_path, new_path))
+    print("Calculating correlation between {0} and {1}".format(
+        old_path, new_path
+    ))
 
     corr_tuple = None
 
@@ -403,7 +406,9 @@ def calculate_correlation(args_tuple):
 
         except Exception as e:
             err = "\n\nLocals: {0}\n\n[!] Could not create the local S3 " \
-                  "download directory.\n\nError details: {1}\n\n".format((locals(), e))
+                  "download directory.\n\nError details: {1}\n\n".format(
+                      (locals(), e)
+                  )
             raise Exception(e)
 
         try:
@@ -581,7 +586,7 @@ def quick_summary(corr_map_dct, output_dir):
     for corr_group in corr_map_dct["correlations"].keys():
         cat_dct = {}
         lines = []
-        for output_type, corr_vec in dict(corr_map_dct["correlations"][corr_group]).iteritems():
+        for output_type, corr_vec in dict(corr_map_dct["correlations"][corr_group]).items():
             lines.append("{0}: {1}".format(output_type, np.mean(np.asarray(corr_vec))))
 
         write_txt_file(lines, os.path.join(output_dir, "average_{0}.txt".format(corr_group)))
@@ -600,7 +605,7 @@ def create_boxplot(corr_group, corr_group_name, pipeline_names=None,
         current_dir = os.getcwd()
 
     allData = []
-    labels = corr_group.keys()
+    labels = list(corr_group.keys())
     labels.sort()
 
     for label in labels:
@@ -609,11 +614,11 @@ def create_boxplot(corr_group, corr_group_name, pipeline_names=None,
         try:
             allData.append(np.asarray(corr_group[label]).astype(np.float))
         except ValueError as ve:
-            print label
+            print(label)
             raise Exception(ve)
 
     pyplot.boxplot(allData)
-    pyplot.xticks(range(1,(len(corr_group)+1)),labels,rotation=85)
+    pyplot.xticks(list(range(1,(len(corr_group)+1))),labels,rotation=85)
     pyplot.margins(0.5,1.0)
     pyplot.xlabel('Derivatives')
     pyplot.title('Correlations between {0} and {1}\n '
@@ -715,7 +720,7 @@ def main():
         # and organized
         corr_map_dict = read_pickle(args.corr_map)
 
-        for corr_group_name in corr_map_dict["correlations"].keys():
+        for corr_group_name in list(corr_map_dict["correlations"].keys()):
             corr_group = corr_map_dict["correlations"][corr_group_name]
             create_boxplot(corr_group, corr_group_name,
                            corr_map_dict["pipeline_names"], output_dir)
