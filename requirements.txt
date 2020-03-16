@@ -1,0 +1,8 @@
+git+https://github.com/shnizzedy/afni.git@lib_afni1D/2→3#egg=afni-python&subdirectory=src/python_scripts
+argparse
+git_python
+matplotlib
+numpy
+pandas
+pyyaml
+scipy
