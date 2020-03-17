@@ -35,14 +35,14 @@ def write_txt_file(text_lines, out_filepath):
 
 def read_pickle(pickle_file):
     import pickle
-    with open(pickle_file, "r") as f:
+    with open(pickle_file, "rb") as f:
         dct = pickle.load(f)
     return dct
 
 
 def write_pickle(dct, out_filepath):
     import pickle
-    with open(out_filepath, "wt") as f:
+    with open(out_filepath, "wb") as f:
         pickle.dump(dct, f, protocol=pickle.HIGHEST_PROTOCOL)
 
 
