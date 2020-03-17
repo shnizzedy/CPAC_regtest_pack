@@ -14,7 +14,7 @@ jobs:
             set +e
             coverage run -m pytest --junitxml=test-results/junit.xml
             coverage report --include="./*" --omit="/home/circleci/.local/*"
-            coverage html
+            coverage html --include="./*" --omit="/home/circleci/.local/*"
       - store_test_results:
           path: test-results
       - store_artifacts:
