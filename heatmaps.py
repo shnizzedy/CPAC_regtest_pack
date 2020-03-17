@@ -11,8 +11,12 @@ from matplotlib import pyplot as plt
 from scipy import io as sio
 from warnings import filterwarnings
 
-from configs import defaults
-from configs.subjects import generate_subject_list_for_range
+try:
+    from configs import defaults
+    from configs.subjects import generate_subject_list_for_range
+except ModuleNotFoundError:
+    from .configs import defaults
+    from .configs.subjects import generate_subject_list_for_range
 
 filterwarnings(
     "ignore",
@@ -193,23 +197,28 @@ def heatmap(data, row_labels, col_labels, ax=None,
     return im, cbar
 
 
-def reshape_corrs(correlation_matrix_path):
+def reshape_corrs(correlation_matrix):
     """
     Function to reshape a given correlation matrix file to the shape expected by matplotlib.
 
     Parameter
     ---------
-    correlation_matrix_path: string
+    correlation_matrix: str or np.ndarray
+        path to matrix file or matrix
 
     Returns
     -------
-    numpy n-dimensional array in the shape of the heatmap (features, subject_sessions)
+    matrix: np.ndarray
+        numpy n-dimensional array in the shape of the heatmap
+        [features, subject_sessions]
     """
     return(
         abs(np.transpose(
             sio.loadmat(
                 correlation_matrix_path
-            )['corrs']
+            )['corrs'] if isinstance(
+                correlation_matrix, str
+            ) else correlation_matrix
         ))
     )
 

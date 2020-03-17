@@ -2,15 +2,27 @@
 import argparse
 import glob
 import numpy as np
+import os
 import pandas as pd
+import scipy.io as sio
 import sys
 
 from afni_python.lib_afni1D import Afni1D
 from scipy.stats import pearsonr
 from tabulate import tabulate
 
-from configs.defaults import feature_headers, motion_list, regressor_list
-from configs.subjects import fmriprep_sub
+try:
+    from configs.defaults import feature_headers, motion_list, regressor_list, \
+                                 software
+    from configs.subjects import fmriprep_sub, \
+                                 generate_subject_list_for_directory
+    from heatmaps import generate_heatmap, reshape_corrs
+except ModuleNotFoundError:
+    from .configs.defaults import feature_headers, motion_list, regressor_list,\
+                                  software
+    from .configs.subjects import fmriprep_sub, \
+                                  generate_subject_list_for_directory
+    from .heatmaps import generate_heatmap, reshape_corrs
 
 sorted_keys = list(feature_headers.keys())
 sorted_keys.sort(key=str.lower)
@@ -24,11 +36,7 @@ feat_def_table = tabulate(
     ],
     headers=["key", "feature name", "documentation link"]
 )
-del sorted_keys
-
-def main(argv):
-    print('🔬 Test ≟.')
-
+del(sorted_keys)
 
 def calc_corr(data1, data2):
     """
@@ -55,16 +63,116 @@ def calc_corr(data1, data2):
     return(float(np.nan))
 
 
-def parse_args(args):
+def main():
     parser = argparse.ArgumentParser(
         description="Create a correlation matrix between two C-PAC output "
-                    "directories.\nThe following features currently have "
-                    "available definitions to calculate Pearson's "
-                    "\x1B[3mr\x1B[23m between C-PAC and fmriprep:\n\n"
-                    f"{feat_def_table}",
+                    "directories.",
+        epilog="The following features currently have available definitions to "
+               "calculate Pearson's \x1B[3mr\x1B[23m between C-PAC and "
+               f"fmriprep:\n\n{feat_def_table}",
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    return(parser.parse_args())
+    
+    path_help = ("path to an outputs directory - the "
+                 "folder containing the participant-ID "
+                 "labeled directories")
+
+    parser.add_argument("--old_outputs_path", type=str,
+                        help=path_help, default="fmriprep")
+                                 
+    parser.add_argument("--old_outputs_software", type=str,
+                        choices=software, default="fmriprep",
+                        help="(default: %(default)s)")
+
+    parser.add_argument("--new_outputs_path", type=str,
+                        help=path_help)
+                             
+    parser.add_argument("--new_outputs_software", type=str,
+                        choices=software, default="C-PAC",
+                        help="(default: %(default)s)")
+    
+    parser.add_argument("--save", dest="save", action='store_true',
+                        help="save matrices & heatmap (default)")
+    
+    parser.add_argument("--no-save", dest="save", action='store_false',
+                        help="do not save matrices & heatmap")
+                        
+    parser.set_defaults(save=True)
+                        
+    parser.add_argument("--subject_list", type=str,
+                        help="(default: subjects in OLD_OUTPUTS_PATH sorted by "
+                             "session, subject ID). TODO: handle path to file")
+    
+    parser.add_argument("--session", type=int,
+                        help="limit to a single given session (integer)")
+    
+    parser.add_argument("--feature_list", type=str,
+                        default=regressor_list + motion_list,
+                        help="TODO: handle path to file (default: %(default)s)")
+                                 
+    parser.add_argument("num_cores", type=int, \
+                            help="number of cores to use - will calculate " \
+                                 "correlations in parallel if greater than 1")
+
+    parser.add_argument("run_name", type=str, \
+                            help="name for the correlations run")
+    
+    args = parser.parse_args()
+    
+    subject_list = args.subject_list if (
+        "subject_list" in args and args.subject_list is not None
+    ) else generate_subject_list_for_directory(args.old_outputs_path)
+    
+    if "session" in args and args.session is not None:
+        subject_list = [
+            sub for sub in subject_list if sub.endswith(str(args.session))
+        ]
+    
+    corrs = Correlation_Matrix(
+        subject_list,
+        args.feature_list,
+        [{
+            "software": args.new_outputs_software,
+            "run_path": args.new_outputs_path
+        }, {
+            "software": args.old_outputs_software,
+            "run_path": args.old_outputs_path
+        }]
+    )
+    
+    path_table = corrs.print_filepaths(plaintext=True)
+    # TODO: print filepaths without given directories
+    
+    if args.save:
+        output_dir = os.path.join(
+            os.getcwd(), "correlations_{0}".format(args.run_name)
+        )
+
+        if not os.path.exists(output_dir):
+            try:
+                os.makedirs(output_dir)
+            except:
+                err = ("\n\n[!] Could not create the output directory for the "
+                       "correlations. Do you have write permissions?\n "
+                       f"Attempted output directory: {output_dir}\n\n")
+                raise Exception(err)
+        
+        path_table.to_csv(os.path.join(output_dir, "filepaths.csv"))
+        sio.savemat(
+            os.path.join(output_dir, "corrs.mat"), {'corrs':corrs.corrs}
+        )
+        
+    generate_heatmap(
+        reshape_corrs(corrs.corrs),
+        args.feature_list,
+        subject_list,
+        save_path=os.path.join(
+            output_dir, "heatmap.png"
+        ) if args.save else args.save,
+        title=f"{args.new_outputs_software} "
+        f"{args.new_outputs_path.split('/')[-1]} vs "
+        f"{args.old_outputs_software} {args.old_outputs_path.split('/')[-1]}"
+    )
 
 
 class Subject_Session_Feature:
@@ -132,6 +240,7 @@ class Subject_Session_Feature:
         -------
         path: str
         """
+        paths = []
         if software.lower() in ["cpac", "c-pac"]:
             if feature in regressor_list:
                 paths = glob.glob(
@@ -286,6 +395,7 @@ class Correlation_Matrix:
                 pd.options.display.max_colwidth
             ) = stored_options
             del stored_options
+        return(path_table)
 
     def run_correlation(self, subject, feature, data1, data2):
         """
@@ -315,6 +425,6 @@ class Correlation_Matrix:
             for j, feature in enumerate(self.data[subject]):
                 self.run_correlation(i, j, *self.data[subject][feature].data)
 
+
 if __name__ == "__main__":
-    args = parse_args(sys.argv)
-    main(args)
+    main()

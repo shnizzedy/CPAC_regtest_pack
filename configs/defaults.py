@@ -1,7 +1,3 @@
-import numpy as np
-
-correlation_matrix = np.zeros((10,30))
-data_path = "/data3/cnl/fmriprep/HNUdata/HNU30"
 feature_headers = {
     'GS': {
         'name': 'global signal regression',
@@ -54,11 +50,4 @@ regressor_list = [
     'aCompCor3',
     'aCompCor4'
 ]
-subjects = {
-    'start': 25427,
-    'stop': 25456
-}
-sessions = {
-    'start': 1,
-    'stop': 2
-}
+software = ["C-PAC", "fmriprep"]
