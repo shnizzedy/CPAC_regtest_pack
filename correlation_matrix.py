@@ -7,7 +7,7 @@ import pandas as pd
 import scipy.io as sio
 import sys
 
-from afni_python.lib_afni1D import Afni1D
+from afnipy.lib_afni1D import Afni1D
 from scipy.stats import pearsonr
 from tabulate import tabulate
 
