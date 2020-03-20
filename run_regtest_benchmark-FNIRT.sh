@@ -33,7 +33,7 @@ else
         -v /media/ebs/runs/$run_name\_benchmark-FNIRT:/output \
         $docker_image /home/ubuntu /output participant \
         --save_working_dir \
-        --data_config_file /media/ebs/CPAC_regtest_pack/data_config_regtest_quick_incomplete.yml \
+        --data_config_file /media/ebs/CPAC_regtest_pack/cpac_data_config_regtest.yml \
         --preconfig benchmark-FNIRT \
         --n_cpus 4 \
         --mem_gb 12 \
