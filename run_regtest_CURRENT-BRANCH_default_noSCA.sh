@@ -17,21 +17,37 @@
 repo='/media/ebs/C-PAC'
 docker_image=$1
 run_name=$2
+enter=$3
 
-sudo docker run \
-    -v $repo/CPAC:/code/CPAC \
-    -v $repo/dev/docker_data/run.py:/code/run.py \
-    -v $repo/dev/docker_data:/cpac_resources \
-    -v $repo/dev/docker_data/bids_utils.py:/code/bids_utils.py \
-    -v $repo/dev/docker_data/default_pipeline.yml:/code/default_pipeline.yml \
-    -v /home/ubuntu:/home/ubuntu \
-    -v /media/ebs/CPAC_regtest_pack:/media/ebs/CPAC_regtest_pack \
-    -v /media/ebs/runs/$run_name\_default-pipeline-noSCA:/output \
-    $docker_image /home/ubuntu /output participant \
-    --save_working_dir \
-    --data_config_file /media/ebs/CPAC_regtest_pack/data_config_regtest_quick_incomplete.yml \
-    --n_cpus 4 \
-    --mem_gb 12 \
-    --pipeline_override "num_ants_threads: 3" \
-    --pipeline_override "numParticipantsAtOnce: 4" \
-    --pipeline_override "runSCA: [0]"
+if [ $enter = "enter" ]
+then
+    sudo docker run -it \
+        -v $repo/CPAC:/code/CPAC \
+        -v $repo/dev/docker_data/run.py:/code/run.py \
+        -v $repo/dev/docker_data:/cpac_resources \
+        -v $repo/dev/docker_data/bids_utils.py:/code/bids_utils.py \
+        -v $repo/dev/docker_data/default_pipeline.yml:/code/default_pipeline.yml \
+        -v /home/ubuntu:/home/ubuntu \
+        -v /media/ebs/CPAC_regtest_pack:/media/ebs/CPAC_regtest_pack \
+        -v /media/ebs/runs/$run_name\_default-pipeline-noSCA:/output \
+        --entrypoint bash \
+        $docker_image
+else
+    sudo docker run \
+        -v $repo/CPAC:/code/CPAC \
+        -v $repo/dev/docker_data/run.py:/code/run.py \
+        -v $repo/dev/docker_data:/cpac_resources \
+        -v $repo/dev/docker_data/bids_utils.py:/code/bids_utils.py \
+        -v $repo/dev/docker_data/default_pipeline.yml:/code/default_pipeline.yml \
+        -v /home/ubuntu:/home/ubuntu \
+        -v /media/ebs/CPAC_regtest_pack:/media/ebs/CPAC_regtest_pack \
+        -v /media/ebs/runs/$run_name\_default-pipeline-noSCA:/output \
+        $docker_image /home/ubuntu /output participant \
+        --save_working_dir \
+        --data_config_file /media/ebs/CPAC_regtest_pack/cpac_data_config_regtest.yml \
+        --n_cpus 4 \
+        --mem_gb 12 \
+        --pipeline_override "num_ants_threads: 3" \
+        --pipeline_override "numParticipantsAtOnce: 4" \
+        --pipeline_override "runSCA: [0]"
+fi

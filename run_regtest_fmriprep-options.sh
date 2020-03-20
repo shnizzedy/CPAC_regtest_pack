@@ -19,14 +19,14 @@ then
     sudo docker run -it \
         -v /home/ubuntu:/home/ubuntu \
         -v /media/ebs/CPAC_regtest_pack:/media/ebs/CPAC_regtest_pack \
-        -v /media/ebs/runs/$run_name\_fmriprep-opts:/output \
+        -v /media/ebs/runs/$run_name\_fmriprep-options:/output \
         --entrypoint bash \
         $docker_image
 else
     sudo docker run \
         -v /home/ubuntu:/home/ubuntu \
         -v /media/ebs/CPAC_regtest_pack:/media/ebs/CPAC_regtest_pack \
-        -v /media/ebs/runs/$run_name\_fmriprep-opts:/output \
+        -v /media/ebs/runs/$run_name\_fmriprep-options:/output \
         $docker_image /home/ubuntu /output participant \
         --save_working_dir \
         --data_config_file /media/ebs/CPAC_regtest_pack/cpac_data_config_regtest.yml \
