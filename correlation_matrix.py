@@ -12,6 +12,7 @@ import pandas as pd
 import scipy.io as sio
 
 from afnipy.lib_afni1D import Afni1D
+from itertools import chain
 from scipy.stats import pearsonr
 from tabulate import tabulate
 
@@ -76,62 +77,62 @@ def main():
                f"fmriprep:\n\n{feat_def_table}",
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    
+
     path_help = ("path to an outputs directory - the "
                  "folder containing the participant-ID "
                  "labeled directories")
 
     parser.add_argument("--old_outputs_path", type=str,
                         help=path_help, default="fmriprep")
-                                 
+
     parser.add_argument("--old_outputs_software", type=str,
                         choices=software, default="fmriprep",
                         help="(default: %(default)s)")
 
     parser.add_argument("--new_outputs_path", type=str,
                         help=path_help)
-                             
+
     parser.add_argument("--new_outputs_software", type=str,
                         choices=software, default="C-PAC",
                         help="(default: %(default)s)")
-    
+
     parser.add_argument("--save", dest="save", action='store_true',
                         help="save matrices & heatmap (default)")
-    
+
     parser.add_argument("--no-save", dest="save", action='store_false',
                         help="do not save matrices & heatmap")
-                        
+
     parser.set_defaults(save=True)
-                        
+
     parser.add_argument("--subject_list", type=str,
                         help="(default: subjects in OLD_OUTPUTS_PATH sorted by "
                              "session, subject ID). TODO: handle path to file")
-    
+
     parser.add_argument("--session", type=int,
                         help="limit to a single given session (integer)")
-    
+
     parser.add_argument("--feature_list", type=str,
                         default=regressor_list + motion_list,
                         help="TODO: handle path to file (default: %(default)s)")
-                                 
+
     parser.add_argument("num_cores", type=int, \
                             help="number of cores to use - will calculate " \
                                  "correlations in parallel if greater than 1")
 
     parser.add_argument("run_name", type=str, \
                             help="name for the correlations run")
-    
+
     args = parser.parse_args()
-    
+
     subject_list = args.subject_list if (
         "subject_list" in args and args.subject_list is not None
     ) else generate_subject_list_for_directory(args.old_outputs_path)
-    
+
     if "session" in args and args.session is not None:
         subject_list = [
             sub for sub in subject_list if sub.endswith(str(args.session))
         ]
-    
+
     corrs = Correlation_Matrix(
         subject_list,
         args.feature_list,
@@ -143,10 +144,10 @@ def main():
             "run_path": args.old_outputs_path
         }]
     )
-    
+
     path_table = corrs.print_filepaths(plaintext=True)
     # TODO: print filepaths without given directories
-    
+
     if args.save:
         output_dir = os.path.join(
             os.getcwd(), "correlations_{0}".format(args.run_name)
@@ -160,12 +161,12 @@ def main():
                        "correlations. Do you have write permissions?\n "
                        f"Attempted output directory: {output_dir}\n\n")
                 raise Exception(err)
-        
+
         path_table.to_csv(os.path.join(output_dir, "filepaths.csv"))
         sio.savemat(
             os.path.join(output_dir, "corrs.mat"), {'corrs':corrs.corrs}
         )
-        
+
     generate_heatmap(
         reshape_corrs(corrs.corrs),
         args.feature_list,
@@ -247,18 +248,26 @@ class Subject_Session_Feature:
         paths = []
         if software.lower() in ["cpac", "c-pac"]:
             if feature in regressor_list:
-                paths = glob.glob(
+                paths = list(chain.from_iterable([glob.glob(
                     f'{run_path}/working/'
                     f'resting_preproc_{fmriprep_sub(subject)}{subject[-6:]}/'
                     'nuisance_0_0/_*/*/build*/*1D'
-                )
+                ), glob.glob(
+                    f'{run_path}/working/'
+                    f'resting_preproc_{subject}{subject[-6:]}/'
+                    'nuisance_0_0/_*/*/build*/*1D'
+                )]))
             elif feature in motion_list:
                 # frame wise displacement power
-                paths = glob.glob(
-                   f'{run_path}/output/*/'
-                   f'{fmriprep_sub(subject)}{subject[-6:]}'
-                   '/frame_wise_displacement_power/*/*'
-                )
+                paths = list(chain.from_iterable([glob.glob(
+                    f'{run_path}/output/*/'
+                    f'{fmriprep_sub(subject)}{subject[-6:]}'
+                    '/frame_wise_displacement_power/*/*'
+                ), glob.glob(
+                    f'{run_path}/output/*/'
+                    f'{subject}{subject[-6:]}'
+                    '/frame_wise_displacement_power/*/*'
+                )]))
         elif software.lower()=="fmriprep":
             fmriprep_subject = fmriprep_sub(subject)
             if feature in regressor_list:
