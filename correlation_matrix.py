@@ -1,11 +1,15 @@
 # coding=utf-8
+import sys
+
+if (sys.version_info < (3, 6)):
+    raise EnvironmentError("This module requires Python 3.6 or newer.")
+
 import argparse
 import glob
 import numpy as np
 import os
 import pandas as pd
 import scipy.io as sio
-import sys
 
 from afnipy.lib_afni1D import Afni1D
 from scipy.stats import pearsonr
