@@ -138,15 +138,18 @@ def main():
         args.feature_list,
         [{
             "software": args.new_outputs_software,
-            "run_path": args.new_outputs_path
+            "run_path": args.new_outputs_path if args.new_outputs_path.endswith(
+                "/"
+            ) else f"{args.new_outputs_path}/"
         }, {
             "software": args.old_outputs_software,
-            "run_path": args.old_outputs_path
+            "run_path": args.old_outputs_path if args.old_outputs_path.endswith(
+                "/"
+            ) else f"{args.old_outputs_path}/"
         }]
     )
 
     path_table = corrs.print_filepaths(plaintext=True)
-    # TODO: print filepaths without given directories
 
     if args.save:
         output_dir = os.path.join(
@@ -377,8 +380,16 @@ class Correlation_Matrix:
         columns = [self.runs[0]["software"], self.runs[1]["software"]]
         path_table = pd.DataFrame(
             [
-                self.data[sub][feat].paths for
-                sub in self.data for feat in self.data[sub]
+                path.replace(
+                    self.runs[0]["run_path"], "", 1
+                ) if path.startswith(
+                    self.runs[0]["run_path"]
+                ) else path.replace(
+                    self.runs[1]["run_path"], "", 1
+                ) if path.startswith(
+                    self.runs[1]["run_path"]
+                ) else path for sub in self.data for feat in
+                self.data[sub] for path in self.data[sub][feat].paths
             ],
             columns=columns,
             index=[
