@@ -29,7 +29,7 @@ then
         -v $repo/dev/docker_data/default_pipeline.yml:/code/default_pipeline.yml \
         -v /home/ubuntu:/home/ubuntu \
         -v /media/ebs/CPAC_regtest_pack:/media/ebs/CPAC_regtest_pack \
-        -v /media/ebs/runs/$run_name\_fmriprep-options:/output \
+        -v /media/ebs/runs/$run_name\_default-pipeline:/output \
         --entrypoint bash \
         $docker_image
 else
@@ -41,11 +41,10 @@ else
         -v $repo/dev/docker_data/default_pipeline.yml:/code/default_pipeline.yml \
         -v /home/ubuntu:/home/ubuntu \
         -v /media/ebs/CPAC_regtest_pack:/media/ebs/CPAC_regtest_pack \
-        -v /media/ebs/runs/$run_name\_fmriprep-options:/output \
+        -v /media/ebs/runs/$run_name\_default-pipeline:/output \
         $docker_image /home/ubuntu /output participant \
         --save_working_dir \
         --data_config_file /media/ebs/CPAC_regtest_pack/cpac_data_config_regtest.yml \
-        --preconfig fmriprep-options \
         --n_cpus 4 \
         --mem_gb 12 \
         --pipeline_override "num_ants_threads: 3" \
