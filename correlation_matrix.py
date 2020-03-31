@@ -12,6 +12,7 @@ import pandas as pd
 import scipy.io as sio
 
 from afnipy.lib_afni1D import Afni1D
+from itertools import chain
 from scipy.stats import pearsonr
 from tabulate import tabulate
 
@@ -76,77 +77,80 @@ def main():
                f"fmriprep:\n\n{feat_def_table}",
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    
+
     path_help = ("path to an outputs directory - the "
                  "folder containing the participant-ID "
                  "labeled directories")
 
     parser.add_argument("--old_outputs_path", type=str,
                         help=path_help, default="fmriprep")
-                                 
+
     parser.add_argument("--old_outputs_software", type=str,
                         choices=software, default="fmriprep",
                         help="(default: %(default)s)")
 
     parser.add_argument("--new_outputs_path", type=str,
                         help=path_help)
-                             
+
     parser.add_argument("--new_outputs_software", type=str,
                         choices=software, default="C-PAC",
                         help="(default: %(default)s)")
-    
+
     parser.add_argument("--save", dest="save", action='store_true',
                         help="save matrices & heatmap (default)")
-    
+
     parser.add_argument("--no-save", dest="save", action='store_false',
                         help="do not save matrices & heatmap")
-                        
+
     parser.set_defaults(save=True)
-                        
+
     parser.add_argument("--subject_list", type=str,
                         help="(default: subjects in OLD_OUTPUTS_PATH sorted by "
                              "session, subject ID). TODO: handle path to file")
-    
+
     parser.add_argument("--session", type=int,
                         help="limit to a single given session (integer)")
-    
+
     parser.add_argument("--feature_list", type=str,
                         default=regressor_list + motion_list,
                         help="TODO: handle path to file (default: %(default)s)")
-                                 
+
     parser.add_argument("num_cores", type=int, \
                             help="number of cores to use - will calculate " \
                                  "correlations in parallel if greater than 1")
 
     parser.add_argument("run_name", type=str, \
                             help="name for the correlations run")
-    
+
     args = parser.parse_args()
-    
+
     subject_list = args.subject_list if (
         "subject_list" in args and args.subject_list is not None
     ) else generate_subject_list_for_directory(args.old_outputs_path)
-    
+
     if "session" in args and args.session is not None:
         subject_list = [
             sub for sub in subject_list if sub.endswith(str(args.session))
         ]
-    
+
     corrs = Correlation_Matrix(
         subject_list,
         args.feature_list,
         [{
             "software": args.new_outputs_software,
-            "run_path": args.new_outputs_path
+            "run_path": args.new_outputs_path if args.new_outputs_path.endswith(
+                "/"
+            ) else f"{args.new_outputs_path}/"
         }, {
             "software": args.old_outputs_software,
-            "run_path": args.old_outputs_path
+            "run_path": args.old_outputs_path if args.old_outputs_path.endswith(
+                "/"
+            ) else f"{args.old_outputs_path}/"
         }]
     )
-    
+
     path_table = corrs.print_filepaths(plaintext=True)
-    # TODO: print filepaths without given directories
-    
+
     if args.save:
         output_dir = os.path.join(
             os.getcwd(), "correlations_{0}".format(args.run_name)
@@ -160,12 +164,12 @@ def main():
                        "correlations. Do you have write permissions?\n "
                        f"Attempted output directory: {output_dir}\n\n")
                 raise Exception(err)
-        
+
         path_table.to_csv(os.path.join(output_dir, "filepaths.csv"))
         sio.savemat(
             os.path.join(output_dir, "corrs.mat"), {'corrs':corrs.corrs}
         )
-        
+
     generate_heatmap(
         reshape_corrs(corrs.corrs),
         args.feature_list,
@@ -195,81 +199,89 @@ class Subject_Session_Feature:
         runs: list of dicts
             [{"software": str, "run_path": str}]
         """
-        self.subject = subject
+        if "_" in subject:
+            self.subject, self.session = subject.split("_", 1)
+        else:
+            self.subject = subject
+            self.session = None
         self.feature = feature
         self.paths = (
             self.get_path(
-                subject,
-                feature,
+                self.subject,
+                self.feature,
                 runs[0]["run_path"],
-                runs[0]["software"]
+                runs[0]["software"],
+                self.session
             ),
             self.get_path(
-                subject,
-                feature,
+                self.subject,
+                self.feature,
                 runs[1]["run_path"],
-                runs[1]["software"]
+                runs[1]["software"],
+                self.session
             )
         )
         self.data = (
             self.read_feature(
                 self.paths[0],
-                feature,
+                self.feature,
                 runs[0]["software"]
             ),
             self.read_feature(
                 self.paths[1],
-                feature,
+                self.feature,
                 runs[1]["software"]
             )
         )
 
-    def get_path(self, subject, feature, run_path, software="C-PAC"):
+    def get_path(self, subject, feature, run_path, software="C-PAC",
+        session=None):
         """
         Method to find a path to specific outputs
 
         Parameters
         ----------
-        subject: str
+        subject: str or int
 
         feature: str
-
-        sub_list: list of str
 
         run_path: str
 
         software: str
 
+        session: str, int or None
+
         Returns
         -------
         path: str
         """
+        subject = str(subject)
+        session = f"*{str(session)}*" if session else ""
         paths = []
         if software.lower() in ["cpac", "c-pac"]:
             if feature in regressor_list:
                 paths = glob.glob(
-                    f'{run_path}/working/'
-                    f'resting_preproc_{fmriprep_sub(subject)}{subject[-6:]}/'
-                    'nuisance_0_0/_*/*/build*/*1D'
+                    f'{run_path}working/'
+                    f'resting_preproc_*{subject}{session}/'
+                    'nuisance_*0_0/_*/*/build*/*1D'
                 )
             elif feature in motion_list:
                 # frame wise displacement power
                 paths = glob.glob(
-                   f'{run_path}/output/*/'
-                   f'{fmriprep_sub(subject)}{subject[-6:]}'
-                   '/frame_wise_displacement_power/*/*'
+                    f'{run_path}output/*/*{subject}{session}'
+                    '/frame_wise_displacement_power/*/*'
                 )
         elif software.lower()=="fmriprep":
             fmriprep_subject = fmriprep_sub(subject)
             if feature in regressor_list:
                 paths = [
-                    f'{run_path}/output/fmriprep/{fmriprep_subject}/func/'
+                    f'{run_path}output/fmriprep/{fmriprep_subject}/func/'
                     f'{fmriprep_subject}_task-rest_run-1'
                     '_desc-confounds_regressors.tsv'
                 ]
             elif feature in motion_list:
                 paths = [
-                    f'{run_path}/working/fmriprep_wf/'
+                    f'{run_path}working/fmriprep_wf/'
                     f'single_subject_{fmriprep_subject[4:]}_wf/'
                     'func_preproc_task_rest_run_1_wf/'
                     'bold_confounds_wf/fdisp/fd_power_2012.txt'
@@ -365,12 +377,20 @@ class Correlation_Matrix:
         """
         Function to print a table
         """
-        columns = [self.runs[0]["software"], self.runs[1]["software"]]
+        columns = ["\n".join([
+            self.runs[i]["software"], wrap(self.runs[i]["run_path"])
+        ]) for i in range(2)]
         path_table = pd.DataFrame(
-            [
-                self.data[sub][feat].paths for
-                sub in self.data for feat in self.data[sub]
-            ],
+            [[
+                f"\u001b[3m\u001b[31mNot found\u001b[0m{' '*13}" if not
+                self.data[sub][feat].paths[i] else wrap(
+                    self.data[sub][feat].paths[i].replace(
+                        self.runs[i]["run_path"], "", 1
+                    ) if self.data[sub][feat].paths[i].startswith(
+                        self.runs[i]["run_path"]
+                    ) else self.data[sub][feat].paths[i]
+                ) for i in range(2)
+            ] for sub in self.data for feat in self.data[sub]],
             columns=columns,
             index=[
                 f"{sub} {feat}" for sub in self.subjects for
@@ -429,6 +449,11 @@ class Correlation_Matrix:
             for j, feature in enumerate(self.data[subject]):
                 self.run_correlation(i, j, *self.data[subject][feature].data)
 
+
+def wrap(string, at=25):
+    return('\n'.join([
+        string[i:i+at] for i in range(0, len(string), at)
+    ]))
 
 if __name__ == "__main__":
     main()

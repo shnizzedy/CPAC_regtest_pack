@@ -23,7 +23,7 @@ def cpac_sub(sub):
     sub-0025427_ses-1
     """
     return(f"{sub[:-1]}_ses-{str(ascii_lowercase.find(sub[-1])+1)}")
-    
+
 
 def fmriprep_sub(sub):
     """
@@ -44,39 +44,50 @@ def fmriprep_sub(sub):
     sub-0025427a
     """
     return(f"{sub.split('_')[0]}{ascii_lowercase[int(sub[-1])-1]}")
-    
-    
-def generate_subject_list_for_directory(path):
+
+
+def generate_subject_list_for_directory(path, old_outputs_software="C-PAC"):
     """
     Function to take a path and return a subject list.
-    
+
     Parameter
     ---------
     path: str
-    
+
+    old_outputs_software: str, optional, default="C-PAC"
+
     Returns
     -------
     sub_list: list
     """
     output = os.path.join(path, "output")
+    sub_ses_list = list(chain.from_iterable([[
+        d for d in os.listdir(
+            os.path.join(output, o)
+        ) if os.path.isdir(os.path.join(output, o, d))
+    ] for o in os.listdir(output)]))
     return(sessions_together([
-        cpac_sub(s) if s[-1] in ascii_lowercase else s for s in list(chain.from_iterable([
-            [
-                d for d in os.listdir(os.path.join(output, o)) if os.path.isdir(os.path.join(output, o, d))
-            ] for o in os.listdir(output)
-        ])) if s.startswith('sub')
+        cpac_sub(s) if s[
+            -1
+        ] in ascii_lowercase else s for s in sub_ses_list
     ]))
 
 
-def generate_subject_list_for_range(subject_start_stop, session_start_stop=None):
+def generate_subject_list_for_range(
+    subject_start_stop,
+    session_start_stop=None
+):
     """
-    Function to create a subject list for a given range. All values are inclusive.
+    Function to create a subject list for a given range. All values are
+    inclusive.
 
     Parameters
     ----------
-    subject_start_stop: 2-tuple of integers (start, stop) or list of specific values
+    subject_start_stop: 2-tuple of integers (start, stop) or list of specific
+    values
 
-    session_start_stop: 2-tuple of integers (start, stop) or list of specific values or None
+    session_start_stop: 2-tuple of integers (start, stop) or list of specific
+    values or None
 
     Returns
     -------
@@ -96,30 +107,32 @@ def generate_subject_list_for_range(subject_start_stop, session_start_stop=None)
             ''
         ]) for sub in _expand_range(subject_start_stop)
     ])
-    
-    
+
+
 def sessions_together(sub_list):
     """
     Function to sort by session then by subject
-    
+
     Parameter
     ---------
     sub_list: list of str
-    
+
     Returns
     -------
     sub_list: list of str
-    
+
     Example
     -------
-    >>> sub_list = ['sub-0025427_ses-1', 'sub-0025427_ses-2', 'sub-0025428_ses-1']
+    >>> sub_list = [
+    ...    'sub-0025427_ses-1', 'sub-0025427_ses-2', 'sub-0025428_ses-1'
+    ... ]
     >>> print(sessions_together(sub_list))
     ['sub-0025427_ses-1', 'sub-0025428_ses-1', 'sub-0025427_ses-2']
     """
     sub_list.sort()
     sub_list.sort(key=lambda x: x.split("ses-")[-1])
     return(sub_list)
-    
+
 
 def _expand_range(tuple_or_list):
     """
