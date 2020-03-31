@@ -127,7 +127,6 @@ def main():
     subject_list = args.subject_list if (
         "subject_list" in args and args.subject_list is not None
     ) else generate_subject_list_for_directory(args.old_outputs_path)
-    print(subject_list)
 
     if "session" in args and args.session is not None:
         subject_list = [
@@ -258,16 +257,17 @@ class Subject_Session_Feature:
         paths = []
         if software.lower() in ["cpac", "c-pac"]:
             if feature in regressor_list:
-                goo = (f'{run_path}/working/'
-                f'resting_preproc_*{subject}{session}/'
-                'nuisance_*0_0/_*/*/build*/*1D')
-                paths = glob.glob(goo)
+                paths = glob.glob(
+                    f'{run_path}/working/'
+                    f'resting_preproc_*{subject}{session}/'
+                    'nuisance_*0_0/_*/*/build*/*1D'
+                )
             elif feature in motion_list:
                 # frame wise displacement power
-                goo = (f'{run_path}/output/*/*{subject}{session}'
-                '/frame_wise_displacement_power/*/*')
-                paths = glob.glob(goo)
-            print(goo)
+                paths = glob.glob(
+                    f'{run_path}/output/*/*{subject}{session}'
+                    '/frame_wise_displacement_power/*/*'
+                )
         elif software.lower()=="fmriprep":
             fmriprep_subject = fmriprep_sub(subject)
             if feature in regressor_list:
