@@ -225,49 +225,43 @@ class Subject_Session_Feature:
             )
         )
 
-    def get_path(self, subject, feature, run_path, software="C-PAC"):
+    def get_path(self, subject, feature, run_path, software="C-PAC",
+        session=None):
         """
         Method to find a path to specific outputs
 
         Parameters
         ----------
-        subject: str
+        subject: str or int
 
         feature: str
-
-        sub_list: list of str
 
         run_path: str
 
         software: str
 
+        session: str, int or None
+
         Returns
         -------
         path: str
         """
+        subject = str(subject)
+        session = str(session) if session else ""
         paths = []
         if software.lower() in ["cpac", "c-pac"]:
             if feature in regressor_list:
-                paths = list(chain.from_iterable([glob.glob(
+                paths = glob.glob(
                     f'{run_path}/working/'
-                    f'resting_preproc_{fmriprep_sub(subject)}{subject[-6:]}/'
-                    'nuisance_0_0/_*/*/build*/*1D'
-                ), glob.glob(
-                    f'{run_path}/working/'
-                    f'resting_preproc_{subject}{subject[-6:]}/'
-                    'nuisance_0_0/_*/*/build*/*1D'
-                )]))
+                    f'resting_preproc_*{subject}*{session}/'
+                    'nuisance_*0_0/_*/*/build*/*1D'
+                )
             elif feature in motion_list:
                 # frame wise displacement power
-                paths = list(chain.from_iterable([glob.glob(
-                    f'{run_path}/output/*/'
-                    f'{fmriprep_sub(subject)}{subject[-6:]}'
+                paths = glob.glob(
+                    f'{run_path}/output/*/*{subject}*{session}*'
                     '/frame_wise_displacement_power/*/*'
-                ), glob.glob(
-                    f'{run_path}/output/*/'
-                    f'{subject}{subject[-6:]}'
-                    '/frame_wise_displacement_power/*/*'
-                )]))
+                )
         elif software.lower()=="fmriprep":
             fmriprep_subject = fmriprep_sub(subject)
             if feature in regressor_list:
