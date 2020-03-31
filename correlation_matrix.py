@@ -127,6 +127,7 @@ def main():
     subject_list = args.subject_list if (
         "subject_list" in args and args.subject_list is not None
     ) else generate_subject_list_for_directory(args.old_outputs_path)
+    print(subject_list)
 
     if "session" in args and args.session is not None:
         subject_list = [
@@ -196,31 +197,37 @@ class Subject_Session_Feature:
         runs: list of dicts
             [{"software": str, "run_path": str}]
         """
-        self.subject = subject
+        if "_" in subject:
+            self.subject, self.session = subject.split("_", 1)
+        else:
+            self.subject = subject
+            self.session = None
         self.feature = feature
         self.paths = (
             self.get_path(
-                subject,
-                feature,
+                self.subject,
+                self.feature,
                 runs[0]["run_path"],
-                runs[0]["software"]
+                runs[0]["software"],
+                self.session
             ),
             self.get_path(
-                subject,
-                feature,
+                self.subject,
+                self.feature,
                 runs[1]["run_path"],
-                runs[1]["software"]
+                runs[1]["software"],
+                self.session
             )
         )
         self.data = (
             self.read_feature(
                 self.paths[0],
-                feature,
+                self.feature,
                 runs[0]["software"]
             ),
             self.read_feature(
                 self.paths[1],
-                feature,
+                self.feature,
                 runs[1]["software"]
             )
         )
@@ -247,21 +254,20 @@ class Subject_Session_Feature:
         path: str
         """
         subject = str(subject)
-        session = str(session) if session else ""
+        session = f"*{str(session)}*" if session else ""
         paths = []
         if software.lower() in ["cpac", "c-pac"]:
             if feature in regressor_list:
-                paths = glob.glob(
-                    f'{run_path}/working/'
-                    f'resting_preproc_*{subject}*{session}/'
-                    'nuisance_*0_0/_*/*/build*/*1D'
-                )
+                goo = (f'{run_path}/working/'
+                f'resting_preproc_*{subject}{session}/'
+                'nuisance_*0_0/_*/*/build*/*1D')
+                paths = glob.glob(goo)
             elif feature in motion_list:
                 # frame wise displacement power
-                paths = glob.glob(
-                    f'{run_path}/output/*/*{subject}*{session}*'
-                    '/frame_wise_displacement_power/*/*'
-                )
+                goo = (f'{run_path}/output/*/*{subject}{session}'
+                '/frame_wise_displacement_power/*/*')
+                paths = glob.glob(goo)
+            print(goo)
         elif software.lower()=="fmriprep":
             fmriprep_subject = fmriprep_sub(subject)
             if feature in regressor_list:
