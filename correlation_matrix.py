@@ -261,27 +261,27 @@ class Subject_Session_Feature:
         if software.lower() in ["cpac", "c-pac"]:
             if feature in regressor_list:
                 paths = glob.glob(
-                    f'{run_path}/working/'
+                    f'{run_path}working/'
                     f'resting_preproc_*{subject}{session}/'
                     'nuisance_*0_0/_*/*/build*/*1D'
                 )
             elif feature in motion_list:
                 # frame wise displacement power
                 paths = glob.glob(
-                    f'{run_path}/output/*/*{subject}{session}'
+                    f'{run_path}output/*/*{subject}{session}'
                     '/frame_wise_displacement_power/*/*'
                 )
         elif software.lower()=="fmriprep":
             fmriprep_subject = fmriprep_sub(subject)
             if feature in regressor_list:
                 paths = [
-                    f'{run_path}/output/fmriprep/{fmriprep_subject}/func/'
+                    f'{run_path}output/fmriprep/{fmriprep_subject}/func/'
                     f'{fmriprep_subject}_task-rest_run-1'
                     '_desc-confounds_regressors.tsv'
                 ]
             elif feature in motion_list:
                 paths = [
-                    f'{run_path}/working/fmriprep_wf/'
+                    f'{run_path}working/fmriprep_wf/'
                     f'single_subject_{fmriprep_subject[4:]}_wf/'
                     'func_preproc_task_rest_run_1_wf/'
                     'bold_confounds_wf/fdisp/fd_power_2012.txt'
