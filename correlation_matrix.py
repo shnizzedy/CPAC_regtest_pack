@@ -382,10 +382,9 @@ class Correlation_Matrix:
         ]) for i in range(2)]
         path_table = pd.DataFrame(
             [[
-                wrap(
-                    "" if not self.data[sub][feat].paths[i] else self.data[sub][
-                        feat
-                    ].paths[i].replace(
+                f"\u001b[3m\u001b[31mNot found\u001b[0m{' '*13}" if not
+                self.data[sub][feat].paths[i] else wrap(
+                    self.data[sub][feat].paths[i].replace(
                         self.runs[i]["run_path"], "", 1
                     ) if self.data[sub][feat].paths[i].startswith(
                         self.runs[i]["run_path"]
