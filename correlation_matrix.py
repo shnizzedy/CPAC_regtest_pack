@@ -379,18 +379,15 @@ class Correlation_Matrix:
         """
         columns = [self.runs[0]["software"], self.runs[1]["software"]]
         path_table = pd.DataFrame(
-            [
-                path.replace(
-                    self.runs[0]["run_path"], "", 1
-                ) if path.startswith(
-                    self.runs[0]["run_path"]
-                ) else path.replace(
-                    self.runs[1]["run_path"], "", 1
-                ) if path.startswith(
-                    self.runs[1]["run_path"]
-                ) else path for sub in self.data for feat in
-                self.data[sub] for path in self.data[sub][feat].paths
-            ],
+            [[
+                "" if not self.data[sub][feat].paths[i] else self.data[sub][
+                    feat
+                ].paths[i].replace(
+                    self.runs[i]["run_path"], "", 1
+                ) if self.data[sub][feat].paths[i].startswith(
+                    self.runs[i]["run_path"]
+                ) else self.data[sub][feat].paths[i] for i in range(2)
+            ] for sub in self.data for feat in self.data[sub]],
             columns=columns,
             index=[
                 f"{sub} {feat}" for sub in self.subjects for
