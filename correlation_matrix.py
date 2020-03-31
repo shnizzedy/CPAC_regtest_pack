@@ -377,16 +377,20 @@ class Correlation_Matrix:
         """
         Function to print a table
         """
-        columns = [self.runs[0]["software"], self.runs[1]["software"]]
+        columns = ["\n".join([
+            self.runs[i]["software"], wrap(self.runs[i]["run_path"])
+        ]) for i in range(2)]
         path_table = pd.DataFrame(
             [[
-                "" if not self.data[sub][feat].paths[i] else self.data[sub][
-                    feat
-                ].paths[i].replace(
-                    self.runs[i]["run_path"], "", 1
-                ) if self.data[sub][feat].paths[i].startswith(
-                    self.runs[i]["run_path"]
-                ) else self.data[sub][feat].paths[i] for i in range(2)
+                wrap(
+                    "" if not self.data[sub][feat].paths[i] else self.data[sub][
+                        feat
+                    ].paths[i].replace(
+                        self.runs[i]["run_path"], "", 1
+                    ) if self.data[sub][feat].paths[i].startswith(
+                        self.runs[i]["run_path"]
+                    ) else self.data[sub][feat].paths[i]
+                ) for i in range(2)
             ] for sub in self.data for feat in self.data[sub]],
             columns=columns,
             index=[
@@ -446,6 +450,11 @@ class Correlation_Matrix:
             for j, feature in enumerate(self.data[subject]):
                 self.run_correlation(i, j, *self.data[subject][feature].data)
 
+
+def wrap(string, at=25):
+    return('\n'.join([
+        string[i:i+at] for i in range(0, len(string), at)
+    ]))
 
 if __name__ == "__main__":
     main()
