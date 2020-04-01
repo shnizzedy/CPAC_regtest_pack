@@ -64,7 +64,10 @@ def generate_subject_list_for_directory(path, old_outputs_software="C-PAC"):
     sub_ses_list = list(chain.from_iterable([[
         d for d in os.listdir(
             os.path.join(output, o)
-        ) if os.path.isdir(os.path.join(output, o, d))
+        ) if all([
+            os.path.isdir(os.path.join(output, o, d)),
+            d not in ["log", "logs"]
+        ])
     ] for o in os.listdir(output)]))
     return(sessions_together([
         cpac_sub(s) if s[
