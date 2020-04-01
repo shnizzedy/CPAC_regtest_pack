@@ -383,7 +383,7 @@ class Correlation_Matrix:
         path_table = pd.DataFrame(
             [[
                 "Not found" if not
-                self.data[sub][feat].paths[i] else wrap(
+                self.data[sub][feat].paths[i] else (
                     self.data[sub][feat].paths[i].replace(
                         self.runs[i]["run_path"], "", 1
                     ) if self.data[sub][feat].paths[i].startswith(
