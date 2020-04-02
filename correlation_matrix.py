@@ -255,10 +255,10 @@ class Subject_Session_Feature:
         -------
         path: str
         """
-        subject = str(subject)
-        session = f"*{str(session)}*" if session else ""
         paths = []
         if software.lower() in ["cpac", "c-pac"]:
+            subject = str(subject)
+            session = f"*{str(session)}*" if session else ""
             if feature in regressor_list:
                 paths = glob.glob(
                     f'{run_path}working/'
@@ -272,7 +272,9 @@ class Subject_Session_Feature:
                     '/frame_wise_displacement_power/*/*'
                 )
         elif software.lower()=="fmriprep":
-            fmriprep_subject = fmriprep_sub(subject)
+            fmriprep_subject = fmriprep_sub(
+                "_".join([subject, session])
+            ) if session else subject
             if feature in regressor_list:
                 paths = [
                     f'{run_path}output/fmriprep/{fmriprep_subject}/func/'
