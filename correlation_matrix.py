@@ -255,16 +255,32 @@ class Subject_Session_Feature:
         -------
         path: str
         """
-        subject = str(subject)
-        session = f"*{str(session)}*" if session else ""
         paths = []
         if software.lower() in ["cpac", "c-pac"]:
+            subject = str(subject)
+            session = f"*{str(session)}*" if session else ""
             if feature in regressor_list:
-                paths = glob.glob(
-                    f'{run_path}working/'
-                    f'resting_preproc_*{subject}{session}/'
-                    'nuisance_*0_0/_*/*/build*/*1D'
-                )
+                paths = list(chain.from_iterable([
+                    glob.glob(
+                        f'{run_path}working/'
+                        f'resting_preproc_*{subject}{session}/'
+                        'nuisance_*_0/_*/*/build*/*1D'
+                    ),
+                    glob.glob(
+                        f'{run_path}working/'
+                        f'resting_preproc_*{subject}{session}/'
+                        'nuisance_*_0/_*/_*/'
+                        f'{get_feature_label(feature, "C-PAC")[1]}/'
+                        'roi_stats.csv'
+                    ),
+                    glob.glob(
+                        f'{run_path}working/'
+                        f'resting_preproc_*{subject}{session}/'
+                        'nuisance_*_0/_*/_*/'
+                        f'{get_feature_label(feature, "C-PAC")[1]}/'
+                        'compcor_regressors.1D'
+                    )
+                ]))
             elif feature in motion_list:
                 # frame wise displacement power
                 paths = glob.glob(
@@ -272,7 +288,7 @@ class Subject_Session_Feature:
                     '/frame_wise_displacement_power/*/*'
                 )
         elif software.lower()=="fmriprep":
-            fmriprep_subject = fmriprep_sub(subject)
+            fmriprep_subject = fmriprep_sub("_".join([subject, session]))
             if feature in regressor_list:
                 paths = [
                     f'{run_path}output/fmriprep/{fmriprep_subject}/func/'
@@ -312,23 +328,33 @@ class Subject_Session_Feature:
             "cpac"
         ] else software.lower()
 
-        feature_label = feature_headers.get(feature, {}).get(software, '') if (
-            "CompCor" not in feature
-        ) else f"{feature[:-1]}PC{feature[-1]}" if (
-            software=="C-PAC"
-        ) else f"{feature[0]}_comp_cor_0{feature[-1]}" if (
-            software=="fmriprep"
-        ) else ""
+        feature_label = get_feature_label(feature, software)
 
         if software=="C-PAC":
-            data = Afni1D(file)
-            header = data.header[-1] if len(data.header) else ""
-            header_list = header.split('\t')
-            return(
-                data.mat[header_list.index(feature_label)] if (
-                    feature_label in header_list
-                ) else data.mat[0][1:]
-            )
+            if file.endswith("nuisance_regressors"):
+                data = Afni1D(file)
+                header = data.header[-1] if len(data.header) else ""
+                header_list = header.split('\t')
+                if isinstance(feature_label, list):
+                    for fl in feature_label:
+                        if(fl in header_list):
+                            return(data.mat[header_list.index(fl)])
+                return(
+                    data.mat[header_list.index(feature_label)] if (
+                        feature_label in header_list
+                    ) else data.mat[0][1:] if (
+                        len(data.mat[:])==1
+                    ) else ([None] * len(data.mat[0][1:]))
+                )
+            elif file.endswith("compcor_regressors.1D"):
+                data = Afni1D(file)
+                return(data.mat[int(feature[-1])])
+
+            else:
+                return(list(pd.read_csv(
+                    file,
+                    sep="\t"
+                )["Sub-brick"][1:].dropna().astype(float).values))
 
         elif software=="fmriprep":
             if file.endswith('.tsv'):
@@ -412,7 +438,7 @@ class Correlation_Matrix:
                         ) else self.data[sub][feat].paths[i]
                     ) for i in range(2)
                 ] for sub in self.data for feat in self.data[sub]],
-                columns=columns,
+                columns=plaintext_columns,
                 index=[
                     f"{sub} {feat}" for sub in self.subjects for
                     feat in self.features
@@ -420,7 +446,7 @@ class Correlation_Matrix:
             )
             print(tabulate(
                 plaintext_path_table,
-                headers=columns
+                headers=plaintext_columns
             ))
         else:
             stored_options = (
@@ -468,6 +494,16 @@ class Correlation_Matrix:
         for i, subject in enumerate(self.data):
             for j, feature in enumerate(self.data[subject]):
                 self.run_correlation(i, j, *self.data[subject][feature].data)
+
+
+def get_feature_label(feature, software):
+    return(feature_headers.get(feature, {}).get(software, '') if (
+        "CompCor" not in feature
+    ) else f"{feature[:-1]}PC{feature[-1]}" if (
+        software=="C-PAC"
+    ) else f"{feature[0]}_comp_cor_0{feature[-1]}" if (
+        software=="fmriprep"
+    ) else "")
 
 
 def wrap(string, at=25):

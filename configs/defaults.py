@@ -3,33 +3,33 @@ feature_headers = {
         'name': 'global signal regression',
         'link': 'https://fcp-indi.github.io/docs/user/nuisance.html#'
                 'global-signal-regression',
-        'C-PAC': 'GlobalSignalMean0',
+        'C-PAC': ['GlobalSignalMean0', 'GlobalSignal_mean'],
         'fmriprep': 'global_signal'
     },
     'CSF': {
         'name': 'mean cerebrospinal fluid',
         'link': 'https://fcp-indi.github.io/docs/user/nuisance.html#'
                 'mean-white-matter-csf',
-        'C-PAC': 'CerebrospinalFluidMean0',
+        'C-PAC': ['CerebrospinalFluidMean0', 'CerebrospinalFluid_mean'],
         'fmriprep': 'csf'
     },
     'WM': {
         'name': 'mean white matter',
         'link': 'https://fcp-indi.github.io/docs/user/nuisance.html#'
                 'mean-white-matter-csf',
-        'C-PAC': 'WhiteMatterMean0',
+        'C-PAC': ['WhiteMatterMean0', ''],
         'fmriprep': 'white_matter'
     },
     'aCompCor': {
         'name': 'aCompCor',
         'link': 'https://fcp-indi.github.io/docs/user/nuisance.html#acompcor',
-        'C-PAC': 'aCompCorPC',
+        'C-PAC': ['aCompCorPC', 'aCompCor_DetrendPC'],
         'fmriprep': 'aCompCor_comp_cor_0'
     },
     'tCompCor': {
         'name': 'tCompCor',
         'link': 'https://fcp-indi.github.io/docs/user/nuisance.html#tcompcor',
-        'C-PAC': 'tCompCorPC',
+        'C-PAC': ['tCompCorPC', ''],
         'fmriprep': 'tCompCor_comp_cor_0'
     },
     'FD': {
