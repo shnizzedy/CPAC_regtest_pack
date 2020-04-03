@@ -260,7 +260,14 @@ class Subject_Session_Feature:
             subject = str(subject)
             session = f"*{str(session)}*" if session else ""
             if feature in regressor_list:
-                paths = list(chain.from_iterable([
+                paths = glob.glob(
+                    f"{run_path}working/"
+                    f"resting_preproc_*{subject}{session}/"
+                    "nuisance_*_0/_*/_*/"
+                    f"{get_feature_label(feature, 'C-PAC')[1][:-1]}/"
+                    "compcor_regressors.1D"
+                ) if "compcor" in feature.lower(
+                ) else list(chain.from_iterable([
                     glob.glob(
                         f"{run_path}working/"
                         f"resting_preproc_*{subject}{session}/"
@@ -272,13 +279,6 @@ class Subject_Session_Feature:
                         "nuisance_*_0/_*/_*/"
                         f"{get_feature_label(feature, 'C-PAC')[1]}/"
                         "roi_stats.csv"
-                    ),
-                    glob.glob(
-                        f"{run_path}working/"
-                        f"resting_preproc_*{subject}{session}/"
-                        "nuisance_*_0/_*/_*/"
-                        f"{get_feature_label(feature, 'C-PAC')[1]}/"
-                        "compcor_regressors.1D"
                     )
                 ]))
             elif feature in motion_list:
@@ -336,6 +336,8 @@ class Subject_Session_Feature:
         if software=="C-PAC":
             if file.endswith(".1D"):
                 data = Afni1D(file)
+                if file.endswith("compcor_regressors.1D"):
+                    return(data.mat[int(feature_label[1][-1])][1:])
                 header = data.header[-1] if len(data.header) else ""
                 header_list = header.split('\t')
                 if isinstance(feature_label, list):
@@ -499,7 +501,10 @@ class Correlation_Matrix:
 def get_feature_label(feature, software):
     return(feature_headers.get(feature, {}).get(software, "") if (
         "CompCor" not in feature
-    ) else f"{feature[:-1]}PC{feature[-1]}" if (
+    ) else [
+        f"{feature[:-1]}PC{feature[-1]}",
+        f"{feature[:-1]}_DetrendPC{feature[-1]}"
+    ] if (
         software=="C-PAC"
     ) else f"{feature[0]}_comp_cor_0{feature[-1]}" if (
         software=="fmriprep"

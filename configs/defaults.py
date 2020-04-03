@@ -29,7 +29,7 @@ feature_headers = {
     'tCompCor': {
         'name': 'tCompCor',
         'link': 'https://fcp-indi.github.io/docs/user/nuisance.html#tcompcor',
-        'C-PAC': ['tCompCorPC', ''],
+        'C-PAC': ['tCompCorPC', 'tCompCor_DetrendPC'],
         'fmriprep': 'tCompCor_comp_cor_0'
     },
     'FD': {
