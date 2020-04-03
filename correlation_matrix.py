@@ -35,8 +35,8 @@ feat_def_table = tabulate(
     [
         [
             key,
-            feature_headers[key].get('name'),
-            feature_headers[key].get('link')
+            feature_headers[key].get("name"),
+            feature_headers[key].get("link")
         ] for key in sorted_keys
     ],
     headers=["key", "feature name", "documentation link"]
@@ -262,45 +262,45 @@ class Subject_Session_Feature:
             if feature in regressor_list:
                 paths = list(chain.from_iterable([
                     glob.glob(
-                        f'{run_path}working/'
-                        f'resting_preproc_*{subject}{session}/'
-                        'nuisance_*_0/_*/*/build*/*1D'
+                        f"{run_path}working/"
+                        f"resting_preproc_*{subject}{session}/"
+                        "nuisance_*_0/_*/*/build*/*1D"
                     ),
                     glob.glob(
-                        f'{run_path}working/'
-                        f'resting_preproc_*{subject}{session}/'
-                        'nuisance_*_0/_*/_*/'
-                        f'{get_feature_label(feature, "C-PAC")[1]}/'
-                        'roi_stats.csv'
+                        f"{run_path}working/"
+                        f"resting_preproc_*{subject}{session}/"
+                        "nuisance_*_0/_*/_*/"
+                        f"{get_feature_label(feature, 'C-PAC')[1]}/"
+                        "roi_stats.csv"
                     ),
                     glob.glob(
-                        f'{run_path}working/'
-                        f'resting_preproc_*{subject}{session}/'
-                        'nuisance_*_0/_*/_*/'
-                        f'{get_feature_label(feature, "C-PAC")[1]}/'
-                        'compcor_regressors.1D'
+                        f"{run_path}working/"
+                        f"resting_preproc_*{subject}{session}/"
+                        "nuisance_*_0/_*/_*/"
+                        f"{get_feature_label(feature, 'C-PAC')[1]}/"
+                        "compcor_regressors.1D"
                     )
                 ]))
             elif feature in motion_list:
                 # frame wise displacement power
                 paths = glob.glob(
-                    f'{run_path}output/*/*{subject}{session}'
-                    '/frame_wise_displacement_power/*/*'
+                    f"{run_path}output/*/*{subject}{session}"
+                    "/frame_wise_displacement_power/*/*"
                 )
         elif software.lower()=="fmriprep":
             fmriprep_subject = fmriprep_sub("_".join([subject, session]))
             if feature in regressor_list:
                 paths = [
-                    f'{run_path}output/fmriprep/{fmriprep_subject}/func/'
-                    f'{fmriprep_subject}_task-rest_run-1'
-                    '_desc-confounds_regressors.tsv'
+                    f"{run_path}output/fmriprep/{fmriprep_subject}/func/"
+                    f"{fmriprep_subject}_task-rest_run-1"
+                    "_desc-confounds_regressors.tsv"
                 ]
             elif feature in motion_list:
                 paths = [
-                    f'{run_path}working/fmriprep_wf/'
-                    f'single_subject_{fmriprep_subject[4:]}_wf/'
-                    'func_preproc_task_rest_run_1_wf/'
-                    'bold_confounds_wf/fdisp/fd_power_2012.txt'
+                    f"{run_path}working/fmriprep_wf/"
+                    f"single_subject_{fmriprep_subject[4:]}_wf/"
+                    "func_preproc_task_rest_run_1_wf/"
+                    "bold_confounds_wf/fdisp/fd_power_2012.txt"
                 ]
         return(paths[0] if len(paths) else None)
 
@@ -330,8 +330,11 @@ class Subject_Session_Feature:
 
         feature_label = get_feature_label(feature, software)
 
+        print(file)
+        print(feature_label)
+
         if software=="C-PAC":
-            if file.endswith("nuisance_regressors"):
+            if file.endswith(".1D"):
                 data = Afni1D(file)
                 header = data.header[-1] if len(data.header) else ""
                 header_list = header.split('\t')
@@ -339,29 +342,26 @@ class Subject_Session_Feature:
                     for fl in feature_label:
                         if(fl in header_list):
                             return(data.mat[header_list.index(fl)])
-                return(
-                    data.mat[header_list.index(feature_label)] if (
-                        feature_label in header_list
-                    ) else data.mat[0][1:] if (
-                        len(data.mat[:])==1
-                    ) else ([None] * len(data.mat[0][1:]))
-                )
-            elif file.endswith("compcor_regressors.1D"):
-                data = Afni1D(file)
-                return(data.mat[int(feature[-1])])
-
-            else:
+                else:
+                    return(
+                        data.mat[header_list.index(feature_label)] if (
+                            feature_label in header_list
+                        ) else data.mat[0][1:] if (
+                            len(data.mat[:])==1
+                        ) else ([None] * len(data.mat[0][1:]))
+                    )
+            elif file.endswith('.csv'):
                 return(list(pd.read_csv(
                     file,
                     sep="\t"
                 )["Sub-brick"][1:].dropna().astype(float).values))
 
         elif software=="fmriprep":
-            if file.endswith('.tsv'):
+            if file.endswith(".tsv"):
                 data = pd.read_csv(file, sep='\t')
                 if feature_label in data.columns:
                     return(data[feature_label])
-            elif file.endswith('.txt'):
+            elif file.endswith(".txt"):
                 with open(file) as f:
                     return([
                         float(x) for x in [x.strip() for x in f.readlines()][1:]
@@ -485,8 +485,8 @@ class Correlation_Matrix:
         """
         corr = calc_corr(data1, data2)
         print(
-            f'Running subject: {subject} {feature} '
-            f'correlation score: {str(corr)}'
+            f"Running subject: {subject} {feature} "
+            f"correlation score: {str(corr)}"
         )
         self.corrs[subject][feature] = round(corr, 3)
 
@@ -497,7 +497,7 @@ class Correlation_Matrix:
 
 
 def get_feature_label(feature, software):
-    return(feature_headers.get(feature, {}).get(software, '') if (
+    return(feature_headers.get(feature, {}).get(software, "") if (
         "CompCor" not in feature
     ) else f"{feature[:-1]}PC{feature[-1]}" if (
         software=="C-PAC"
