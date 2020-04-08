@@ -223,7 +223,7 @@ def create_unique_file_dict(filepaths, output_folder_path, replacements=None):
     # output
     #   files_dict
     #     a dictionary of dictionaries, format:
-    #     files_dict["centrality"] = 
+    #     files_dict["centrality"] =
     #         {("centrality", midpath, nums): <filepath>, ..}
 
     files_dict = {}
@@ -373,7 +373,7 @@ def calculate_correlation(args_tuple):
     import math
 
     from cpac_correlations_wf import download_from_s3, concordance
-   
+
     category = args_tuple[0]
     old_path = args_tuple[1]
     new_path = args_tuple[2]
@@ -414,9 +414,9 @@ def calculate_correlation(args_tuple):
         except Exception as e:
             err = "\n\nLocals: {0}\n\n[!] Could not download the files from " \
                   "the S3 bucket. \nS3 filepath: {1}\nLocal destination: {2}" \
-                  "\nS3 creds: {3}\n\nError details: {4}\n\n".format(locals(), 
-                                                                     old_path, 
-                                                                     old_local_path, 
+                  "\nS3 creds: {3}\n\nError details: {4}\n\n".format(locals(),
+                                                                     old_path,
+                                                                     old_local_path,
                                                                      s3_creds, e)
             raise Exception(e)
 
@@ -428,9 +428,9 @@ def calculate_correlation(args_tuple):
         except Exception as e:
             err = "\n\nLocals: {0}\n\n[!] Could not download the files from " \
                  "the S3 bucket. \nS3 filepath: {1}\nLocal destination: {2}" \
-                  "\nS3 creds: {3}\n\nError details: {4}\n\n".format(locals(), 
-                                                                     new_path, 
-                                                                     new_local_path, 
+                  "\nS3 creds: {3}\n\nError details: {4}\n\n".format(locals(),
+                                                                     new_path,
+                                                                     new_local_path,
                                                                      s3_creds, e)
             raise Exception(e)
 
@@ -445,7 +445,7 @@ def calculate_correlation(args_tuple):
                 concor = correlate_text_based(old_path, new_path)
                 corr_tuple = (category, [concor], (old_path, new_path))
             except Exception as e:
-                corr_tuple = ("file reading problem: {0}".format(e), 
+                corr_tuple = ("file reading problem: {0}".format(e),
                               old_path, new_path)
                 print(str(corr_tuple))
 
@@ -465,7 +465,7 @@ def calculate_correlation(args_tuple):
                 data_2 = nb.load(new_path).get_data()
 
             except Exception as e:
-                corr_tuple = ("file reading problem: {0}".format(e), 
+                corr_tuple = ("file reading problem: {0}".format(e),
                               old_path, new_path)
                 print(str(corr_tuple))
                 return corr_tuple
@@ -474,12 +474,12 @@ def calculate_correlation(args_tuple):
         if data_1.flatten().shape == data_2.flatten().shape:
             try:
                 if len(old_file_dims) > 3:
-                    concor = correlate_two_nifti_timeseries(data_1, data_2, 
+                    concor = correlate_two_nifti_timeseries(data_1, data_2,
                                                             old_file_img.shape)
                 else:
                     concor = correlate(data_1, data_2)
             except Exception as e:
-                corr_tuple = ("correlating problem: {0}".format(e), 
+                corr_tuple = ("correlating problem: {0}".format(e),
                               old_path, new_path)
                 print(str(corr_tuple))
                 return corr_tuple
@@ -555,7 +555,7 @@ def organize_correlations(concor_dict):
         corr_map_dict["correlations"][group] = regCorrMap
     else:
         print("No values in {0}".format(group))
- 
+
     group = "concordance_native_space_outputs"
     if len(native_outputs.values()) > 0:
         corr_map_dict["correlations"][group] = native_outputs
@@ -582,10 +582,12 @@ def quick_summary(corr_map_dct, output_dir):
         cat_dct = {}
         lines = []
         for output_type, corr_vec in dict(corr_map_dct["correlations"][corr_group]).iteritems():
+            print("corr_vec")
+            print(corr_vec)
             lines.append("{0}: {1}".format(output_type, np.mean(np.asarray(corr_vec))))
 
         write_txt_file(lines, os.path.join(output_dir, "average_{0}.txt".format(corr_group)))
-        
+
 
 def create_boxplot(corr_group, corr_group_name, pipeline_names=None,
                    current_dir=None):
@@ -617,7 +619,7 @@ def create_boxplot(corr_group, corr_group_name, pipeline_names=None,
     pyplot.margins(0.5,1.0)
     pyplot.xlabel('Derivatives')
     pyplot.title('Correlations between {0} and {1}\n '
-                 '( {2} )'.format(pipeline_names[0], 
+                 '( {2} )'.format(pipeline_names[0],
                                   pipeline_names[1],
                                   corr_group_name))
 
@@ -649,7 +651,7 @@ def main():
                             help="path to a CPAC outputs directory - the " \
                                  "folder containing the participant-ID " \
                                  "labeled directories")
-                                 
+
     parser.add_argument("num_cores", type=int, \
                             help="number of cores to use - will calculate " \
                                  "correlations in parallel if greater than 1")
@@ -845,7 +847,7 @@ def main():
             corr_map_dict["pipeline_names"] = pipeline_names
 
             write_pickle(corr_map_dict, os.path.join(output_dir, "corr_map_dict.p"))
-            
+
             quick_summary(corr_map_dict, output_dir)
 
             if sub_opt_dct:
