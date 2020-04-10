@@ -17,7 +17,7 @@ feature_headers = {
         'name': 'mean white matter',
         'link': 'https://fcp-indi.github.io/docs/user/nuisance.html#'
                 'mean-white-matter-csf',
-        'C-PAC': ['WhiteMatterMean0', ''],
+        'C-PAC': ['WhiteMatterMean0', 'WhiteMatter_mean'],
         'fmriprep': 'white_matter'
     },
     'aCompCor': {
