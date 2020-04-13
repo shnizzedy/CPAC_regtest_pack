@@ -162,7 +162,7 @@ def concordance(x, y, rho):
 def correlate(data_1, data_2):
     pearson = scipy.stats.pearsonr(data_1.flatten(), data_2.flatten())[0]
     concor = concordance(data_1.flatten(), data_2.flatten(), pearson)
-    return concor
+    return (concor, pearson)
 
 
 def quick_corr_csv(csv_1, csv_2):
@@ -171,7 +171,7 @@ def quick_corr_csv(csv_1, csv_2):
     csv_1_data = parse_csv_data(csv_1_lines)
     csv_2_data = parse_csv_data(csv_2_lines)
     if csv_1_data.flatten().shape == csv_2_data.flatten().shape:
-        concor = correlate(csv_1_data, csv_2_data)
+        concor, pearson = correlate(csv_1_data, csv_2_data)
     print(concor)
 
 
@@ -441,6 +441,7 @@ def calculate_correlation(args_tuple):
                 ('spatial_map_timeseries.txt' in old_path and 'spatial_map_timeseries.txt' in new_path) or \
                     ('.1D' in old_path and '.1D' in new_path) or \
                         ('.tsv' in old_path and '.tsv' in new_path):
+            '''
             try:
                 concor = correlate_text_based(old_path, new_path)
                 corr_tuple = (category, [concor], (old_path, new_path))
@@ -450,6 +451,8 @@ def calculate_correlation(args_tuple):
                 print(str(corr_tuple))
 
             return corr_tuple
+            '''
+            return None
 
         else:
             try:
@@ -474,19 +477,20 @@ def calculate_correlation(args_tuple):
         if data_1.flatten().shape == data_2.flatten().shape:
             try:
                 if len(old_file_dims) > 3:
-                    concor = correlate_two_nifti_timeseries(data_1, data_2, 
-                                                            old_file_img.shape)
+                    #concor = correlate_two_nifti_timeseries(data_1, data_2, 
+                    #                                        old_file_img.shape)
+                    return None
                 else:
-                    concor = correlate(data_1, data_2)
+                    concor, pearson = correlate(data_1, data_2)
             except Exception as e:
                 corr_tuple = ("correlating problem: {0}".format(e), 
                               old_path, new_path)
                 print(str(corr_tuple))
                 return corr_tuple
             if concor > 0.980:
-                corr_tuple = (category, [concor])
+                corr_tuple = (category, [concor], [pearson])
             else:
-                corr_tuple = (category, [concor], (old_path, new_path))
+                corr_tuple = (category, [concor], [pearson], (old_path, new_path))
             print("Success - {0}".format(str(concor)))
         else:
             corr_tuple = ("different shape", old_path, new_path)
@@ -507,7 +511,7 @@ def calculate_correlation(args_tuple):
     return corr_tuple
 
 
-def organize_correlations(concor_dict):
+def organize_correlations(concor_dict, corr_type="concordance"):
 
     # break up all of the correlations into groups - each group of derivatives
     # will go into its own boxplot
@@ -550,25 +554,25 @@ def organize_correlations(concor_dict):
             if word in key:
                 functionals[key] = concor_dict[key]
 
-    group = "concordance_registration_and_segmentation"
+    group = "{0}_registration_and_segmentation".format(corr_type)
     if len(regCorrMap.values()) > 0:
         corr_map_dict["correlations"][group] = regCorrMap
     else:
         print("No values in {0}".format(group))
  
-    group = "concordance_native_space_outputs"
+    group = "{0}_native_space_outputs".format(corr_type)
     if len(native_outputs.values()) > 0:
         corr_map_dict["correlations"][group] = native_outputs
     else:
         print("No values in {0}".format(group))
 
-    group = "concordance_template_space_outputs"
+    group = "{0}_template_space_outputs".format(corr_type)
     if len(template_outputs.values()) > 0:
         corr_map_dict["correlations"][group] = template_outputs
     else:
         print("No values in {0}".format(group))
 
-    group = "concordance_functional_outputs"
+    group = "{0}_functional_outputs".format(corr_type)
     if len(functionals.values()) > 0:
         corr_map_dict["correlations"][group] = functionals
     else:
@@ -769,16 +773,19 @@ def main():
             write_pickle(matched_path_dict, matched_path_file)
 
         all_corr_dict = {}
+        all_pearson_dict = {}
         sub_opt_dct = {}
 
         args_list = []
 
         # load full corr yaml dict
-        all_corr_file = os.path.join(output_dir, "all_corr_dct.p")
+        all_corr_file = os.path.join(output_dir, "all_concordance_dct.p")
+        all_pearson_file = os.path.join(output_dir, "all_pearson_dct.p")
 
         if os.path.exists(all_corr_file):
             # if correlations are already calculated
             all_corr_dict = read_pickle(all_corr_file)
+            all_pearson_dict = read_pickle(all_pearson_file)
         else:
             for category in matched_path_dict.keys():
                 for file_id in matched_path_dict[category].keys():
@@ -810,20 +817,28 @@ def main():
 
             print("\nCorrelations done.\n")
             for corr_tuple in corr_tuple_list:
+
+                #temp
+                if not corr_tuple:
+                    continue
+
                 if corr_tuple[0] not in all_corr_dict.keys():
                     all_corr_dict[corr_tuple[0]] = []
+                if corr_tuple[0] not in all_pearson_dict.keys():
+                    all_pearson_dict[corr_tuple[0]] = []
                 all_corr_dict[corr_tuple[0]] += corr_tuple[1]
-                print("added- {0}:{1}".format(corr_tuple[0], corr_tuple[1]))
+                all_pearson_dict[corr_tuple[0]] += corr_tuple[2]
 
-                if len(corr_tuple) > 2:
+                if len(corr_tuple) > 3:
                     if corr_tuple[0] not in sub_opt_dct:
                         sub_opt_dct[corr_tuple[0]] = []
                     try:
-                        sub_opt_dct[corr_tuple[0]].append("{0}:\n{1}\n{2}\n\n".format(corr_tuple[1][0], corr_tuple[2][0], corr_tuple[2][1]))
+                        sub_opt_dct[corr_tuple[0]].append("{0}:\n{1}\n{2}\n\n".format(corr_tuple[1][0], corr_tuple[3][0], corr_tuple[3][1]))
                     except TypeError:
                         pass
 
             write_pickle(all_corr_dict, all_corr_file)
+            write_pickle(all_pearson_dict, all_pearson_file)
 
         if args.working_dir:
             sorted_vals = []
@@ -844,9 +859,14 @@ def main():
             corr_map_dict = organize_correlations(all_corr_dict)
             corr_map_dict["pipeline_names"] = pipeline_names
 
-            write_pickle(corr_map_dict, os.path.join(output_dir, "corr_map_dict.p"))
+            pearson_map_dict = organize_correlations(all_pearson_dict, "pearson")
+            pearson_map_dict["pipeline_names"] = pipeline_names
+
+            write_pickle(corr_map_dict, os.path.join(output_dir, "concordance_map_dct.p"))
+            write_pickle(pearson_map_dict, os.path.join(output_dir, "pearson_map_dct.p"))
             
             quick_summary(corr_map_dict, output_dir)
+            quick_summary(pearson_map_dict, output_dir)
 
             if sub_opt_dct:
                 write_yml_file(sub_opt_dct, os.path.join(output_dir, "sub_optimal.yml"))
@@ -855,6 +875,11 @@ def main():
                 corr_group = corr_map_dict["correlations"][corr_group_name]
                 create_boxplot(corr_group, corr_group_name,
                                corr_map_dict["pipeline_names"], output_dir)
+
+            for corr_group_name in pearson_map_dict["correlations"].keys():
+                corr_group = pearson_map_dict["correlations"][corr_group_name]
+                create_boxplot(corr_group, corr_group_name,
+                               pearson_map_dict["pipeline_names"], output_dir)
 
 
 if __name__ == "__main__":

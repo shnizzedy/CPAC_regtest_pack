@@ -42,12 +42,15 @@ else
         -v /home/ubuntu:/home/ubuntu \
         -v /media/ebs/CPAC_regtest_pack:/media/ebs/CPAC_regtest_pack \
         -v /media/ebs/runs/$run_name\_benchmark-ANTS:/output \
+        -v /media/ebs/runs/v161a-newdata-config_benchmark-ANTS_pre162-nomedian:/media/ebs/runs/v161a-newdata-config_benchmark-ANTS_pre162-nomedian \
         $docker_image /home/ubuntu /output participant \
         --save_working_dir \
-        --data_config_file /media/ebs/CPAC_regtest_pack/cpac_data_config_regtest.yml \
+        --data_config_file /media/ebs/CPAC_regtest_pack/cpac_data_config_regtest_ALREADY-BRAIN.yml \
         --preconfig benchmark-ANTS \
         --n_cpus 4 \
         --mem_gb 12 \
-        --pipeline_override "num_ants_threads: 3" \
-        --pipeline_override "numParticipantsAtOnce: 4"
+        --pipeline_override "num_ants_threads: 4" \
+        --pipeline_override "numParticipantsAtOnce: 8" \
+        --pipeline_override "runICA: [0]" \
+        --pipeline_override "already_skullstripped: [1]"
 fi

@@ -44,9 +44,12 @@ else
         -v /media/ebs/runs/$run_name\_benchmark-FNIRT:/output \
         $docker_image /home/ubuntu /output participant \
         --save_working_dir \
-        --data_config_file /media/ebs/CPAC_regtest_pack/cpac_data_config_regtest.yml \
+        --data_config_file /media/ebs/CPAC_regtest_pack/cpac_data_config_regtest_oldsubs.yml \
         --preconfig benchmark-FNIRT \
-        --n_cpus 4 \
+        --n_cpus 6 \
         --mem_gb 12 \
-        --pipeline_override "numParticipantsAtOnce: 4"
+        --pipeline_override "numParticipantsAtOnce: 5" \
+        --pipeline_override "runICA: [0]" \
+        --pipeline_override "skullstrip_option: [FSL]" \
+        --pipeline_override "runRegisterFuncToTemplate: ['T1_template', 'Off']"
 fi

@@ -27,8 +27,13 @@ for line in lines:
             delimiter = '\t'
         break
 
+if '.par' in oned_one_file:
+    delimiter = '  '
+
 oned_one = pd.read_csv(oned_one_file, delimiter=delimiter, header=line_idx-1).dropna(axis=1)
 oned_two = pd.read_csv(oned_two_file, delimiter=delimiter, header=line_idx-1).dropna(axis=1)
+
+print(oned_one)
 
 if col:
     cols = [col]

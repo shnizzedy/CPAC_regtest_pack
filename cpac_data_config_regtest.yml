@@ -3,97 +3,6 @@
 # 
 # this is a cross-section of multiple datasets meant for the C-PAC release regression test
 
-- anat: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040524/ses-NFB3/anat/sub-A00040524_ses-NFB3_T1w.nii.gz
-  func:
-    MSIT:
-      fmap_mag: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040524/ses-NFB3/fmap/sub-A00040524_ses-NFB3_magnitude1.nii.gz
-      scan: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040524/ses-NFB3/func/sub-A00040524_ses-NFB3_task-MSIT_bold.nii.gz
-      scan_parameters: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/task-MSIT_bold.json
-    PEER1:
-      fmap_mag: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040524/ses-NFB3/fmap/sub-A00040524_ses-NFB3_magnitude1.nii.gz
-      scan: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040524/ses-NFB3/func/sub-A00040524_ses-NFB3_task-PEER1_bold.nii.gz
-      scan_parameters: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/task-PEER1_bold.json
-    PEER2:
-      fmap_mag: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040524/ses-NFB3/fmap/sub-A00040524_ses-NFB3_magnitude1.nii.gz
-      scan: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040524/ses-NFB3/func/sub-A00040524_ses-NFB3_task-PEER2_bold.nii.gz
-      scan_parameters: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/task-PEER2_bold.json
-  site: site-1
-  subject_id: A00040524
-  unique_id: NFB3
-- anat: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040573/ses-NFB3/anat/sub-A00040573_ses-NFB3_T1w.nii.gz
-  func:
-    MSIT:
-      scan: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040573/ses-NFB3/func/sub-A00040573_ses-NFB3_task-MSIT_bold.nii.gz
-      scan_parameters: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/task-MSIT_bold.json
-    PEER1:
-      scan: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040573/ses-NFB3/func/sub-A00040573_ses-NFB3_task-PEER1_bold.nii.gz
-      scan_parameters: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/task-PEER1_bold.json
-    PEER2:
-      scan: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040573/ses-NFB3/func/sub-A00040573_ses-NFB3_task-PEER2_bold.nii.gz
-      scan_parameters: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/task-PEER2_bold.json
-  site: site-1
-  subject_id: A00040573
-  unique_id: NFB3
-- anat: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040623/ses-NFB3/anat/sub-A00040623_ses-NFB3_T1w.nii.gz
-  func:
-    MSIT:
-      fmap_mag: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040623/ses-NFB3/fmap/sub-A00040623_ses-NFB3_magnitude1.nii.gz
-      fmap_phase: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040623/ses-NFB3/fmap/sub-A00040623_ses-NFB3_phasediff.nii.gz
-      scan: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040623/ses-NFB3/func/sub-A00040623_ses-NFB3_task-MSIT_bold.nii.gz
-      scan_parameters: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/task-MSIT_bold.json
-    PEER1:
-      fmap_mag: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040623/ses-NFB3/fmap/sub-A00040623_ses-NFB3_magnitude1.nii.gz
-      fmap_phase: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040623/ses-NFB3/fmap/sub-A00040623_ses-NFB3_phasediff.nii.gz
-      scan: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040623/ses-NFB3/func/sub-A00040623_ses-NFB3_task-PEER1_bold.nii.gz
-      scan_parameters: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/task-PEER1_bold.json
-    PEER2:
-      fmap_mag: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040623/ses-NFB3/fmap/sub-A00040623_ses-NFB3_magnitude1.nii.gz
-      fmap_phase: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040623/ses-NFB3/fmap/sub-A00040623_ses-NFB3_phasediff.nii.gz
-      scan: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040623/ses-NFB3/func/sub-A00040623_ses-NFB3_task-PEER2_bold.nii.gz
-      scan_parameters: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/task-PEER2_bold.json
-  site: site-1
-  subject_id: A00040623
-  unique_id: NFB3
-- anat: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040628/ses-NFB3/anat/sub-A00040628_ses-NFB3_T1w.nii.gz
-  func:
-    MSIT:
-      fmap_mag: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040628/ses-NFB3/fmap/sub-A00040628_ses-NFB3_magnitude1.nii.gz
-      fmap_phase: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040628/ses-NFB3/fmap/sub-A00040628_ses-NFB3_phasediff.nii.gz
-      scan: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040628/ses-NFB3/func/sub-A00040628_ses-NFB3_task-MSIT_bold.nii.gz
-      scan_parameters: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/task-MSIT_bold.json
-    PEER1:
-      fmap_mag: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040628/ses-NFB3/fmap/sub-A00040628_ses-NFB3_magnitude1.nii.gz
-      fmap_phase: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040628/ses-NFB3/fmap/sub-A00040628_ses-NFB3_phasediff.nii.gz
-      scan: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040628/ses-NFB3/func/sub-A00040628_ses-NFB3_task-PEER1_bold.nii.gz
-      scan_parameters: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/task-PEER1_bold.json
-    PEER2:
-      fmap_mag: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040628/ses-NFB3/fmap/sub-A00040628_ses-NFB3_magnitude1.nii.gz
-      fmap_phase: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040628/ses-NFB3/fmap/sub-A00040628_ses-NFB3_phasediff.nii.gz
-      scan: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040628/ses-NFB3/func/sub-A00040628_ses-NFB3_task-PEER2_bold.nii.gz
-      scan_parameters: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/task-PEER2_bold.json
-  site: site-1
-  subject_id: A00040628
-  unique_id: NFB3
-- anat: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040640/ses-NFB3/anat/sub-A00040640_ses-NFB3_T1w.nii.gz
-  func:
-    MSIT:
-      fmap_mag: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040640/ses-NFB3/fmap/sub-A00040640_ses-NFB3_magnitude1.nii.gz
-      fmap_phase: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040640/ses-NFB3/fmap/sub-A00040640_ses-NFB3_phasediff.nii.gz
-      scan: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040640/ses-NFB3/func/sub-A00040640_ses-NFB3_task-MSIT_bold.nii.gz
-      scan_parameters: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/task-MSIT_bold.json
-    PEER1:
-      fmap_mag: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040640/ses-NFB3/fmap/sub-A00040640_ses-NFB3_magnitude1.nii.gz
-      fmap_phase: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040640/ses-NFB3/fmap/sub-A00040640_ses-NFB3_phasediff.nii.gz
-      scan: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040640/ses-NFB3/func/sub-A00040640_ses-NFB3_task-PEER1_bold.nii.gz
-      scan_parameters: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/task-PEER1_bold.json
-    PEER2:
-      fmap_mag: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040640/ses-NFB3/fmap/sub-A00040640_ses-NFB3_magnitude1.nii.gz
-      fmap_phase: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040640/ses-NFB3/fmap/sub-A00040640_ses-NFB3_phasediff.nii.gz
-      scan: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/sub-A00040640/ses-NFB3/func/sub-A00040640_ses-NFB3_task-PEER2_bold.nii.gz
-      scan_parameters: s3://fcp-indi/data/Projects/RocklandSample/RawDataBIDS/task-PEER2_bold.json
-  site: site-1
-  subject_id: A00040640
-  unique_id: NFB3
 - anat: s3://fcp-indi/data/Projects/ADHD200/RawDataBIDS/KKI/sub-1019436/ses-1/anat/sub-1019436_ses-1_run-1_T1w.nii.gz
   func:
     rest_acq-1_run-1:
@@ -194,6 +103,60 @@
   site: Site-CBIC
   subject_id: sub-NDARAB458VK9
   unique_id: '1'
+- anat: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARAD481FXF/anat/sub-NDARAD481FXF_T1w.nii.gz
+  fmap:
+    diff_mag_one:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARAD481FXF/fmap/sub-NDARAD481FXF_magnitude1.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARAD481FXF/fmap/sub-NDARAD481FXF_magnitude1.json
+    diff_mag_two: 
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARAD481FXF/fmap/sub-NDARAD481FXF_magnitude2.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARAD481FXF/fmap/sub-NDARAD481FXF_magnitude2.json
+    diff_phase: 
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARAD481FXF/fmap/sub-NDARAD481FXF_phasediff.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARAD481FXF/fmap/sub-NDARAD481FXF_phasediff.json
+  func:
+    task-rest:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARAD481FXF/func/sub-NDARAD481FXF_task-rest_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARAD481FXF/func/sub-NDARAD481FXF_task-rest_bold.json
+  site: Site-SI
+  subject_id: sub-NDARAD481FXF
+  unique_id: 1
+- anat: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARAV894XWD/anat/sub-NDARAV894XWD_T1w.nii.gz
+  fmap:
+    diff_mag_one:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARAV894XWD/fmap/sub-NDARAV894XWD_magnitude1.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARAV894XWD/fmap/sub-NDARAV894XWD_magnitude1.json
+    diff_mag_two:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARAV894XWD/fmap/sub-NDARAV894XWD_magnitude2.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARAV894XWD/fmap/sub-NDARAV894XWD_magnitude2.json
+    diff_phase:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARAV894XWD/fmap/sub-NDARAV894XWD_phasediff.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARAV894XWD/fmap/sub-NDARAV894XWD_phasediff.json
+  func:
+    task-rest:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARAV894XWD/func/sub-NDARAV894XWD_task-rest_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARAV894XWD/func/sub-NDARAV894XWD_task-rest_bold.json
+  site: Site-SI
+  subject_id: sub-NDARAV894XWD
+  unique_id: 1
+- anat: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARCA186WGH/anat/sub-NDARCA186WGH_T1w.nii.gz
+  fmap:
+    diff_mag_one:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARCA186WGH/fmap/sub-NDARCA186WGH_magnitude1.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARCA186WGH/fmap/sub-NDARCA186WGH_magnitude1.json
+    diff_mag_two:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARCA186WGH/fmap/sub-NDARCA186WGH_magnitude2.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARCA186WGH/fmap/sub-NDARCA186WGH_magnitude2.json
+    diff_phase:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARCA186WGH/fmap/sub-NDARCA186WGH_phasediff.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARCA186WGH/fmap/sub-NDARCA186WGH_phasediff.json
+  func:
+    task-rest:
+      scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARCA186WGH/func/sub-NDARCA186WGH_task-rest_bold.nii.gz
+      scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARCA186WGH/func/sub-NDARCA186WGH_task-rest_bold.json
+  site: Site-SI
+  subject_id: sub-NDARCA186WGH
+  unique_id: 1
 - anat: s3://fcp-indi/data/Projects/CORR/RawDataBIDS/HNU_1/sub-0025453/ses-1/anat/sub-0025453_ses-1_run-1_T1w.nii.gz
   creds_path: null
   func:
@@ -277,7 +240,7 @@
           move as little as possible while observing the fixation cross. Subjects
           were also instructed not to engage in breath counting or meditation.'
         TaskName: rest
-  site_id: site-none
+  site_id: HNU_1
   subject_id: sub-0025453
   unique_id: ses-1
 - anat: s3://fcp-indi/data/Projects/CORR/RawDataBIDS/HNU_1/sub-0025428/ses-1/anat/sub-0025428_ses-1_run-1_T1w.nii.gz
@@ -363,7 +326,7 @@
           move as little as possible while observing the fixation cross. Subjects
           were also instructed not to engage in breath counting or meditation.'
         TaskName: rest
-  site_id: site-none
+  site_id: HNU_1
   subject_id: sub-0025428
   unique_id: ses-1
 - anat: s3://fcp-indi/data/Projects/CORR/RawDataBIDS/HNU_1/sub-0025429/ses-1/anat/sub-0025429_ses-1_run-1_T1w.nii.gz
@@ -449,7 +412,7 @@
           move as little as possible while observing the fixation cross. Subjects
           were also instructed not to engage in breath counting or meditation.'
         TaskName: rest
-  site_id: site-none
+  site_id: HNU_1
   subject_id: sub-0025429
   unique_id: ses-1
 - anat: s3://fcp-indi/data/Projects/CORR/RawDataBIDS/HNU_1/sub-0025452/ses-1/anat/sub-0025452_ses-1_run-1_T1w.nii.gz
@@ -535,7 +498,7 @@
           move as little as possible while observing the fixation cross. Subjects
           were also instructed not to engage in breath counting or meditation.'
         TaskName: rest
-  site_id: site-none
+  site_id: HNU_1
   subject_id: sub-0025452
   unique_id: ses-1
 - anat: s3://fcp-indi/data/Projects/CORR/RawDataBIDS/HNU_1/sub-0025448/ses-1/anat/sub-0025448_ses-1_run-1_T1w.nii.gz
@@ -621,14 +584,6 @@
           move as little as possible while observing the fixation cross. Subjects
           were also instructed not to engage in breath counting or meditation.'
         TaskName: rest
-  site_id: site-none
+  site_id: HNU_1
   subject_id: sub-0025448
   unique_id: ses-1
-
-
-
-
-
-
-
-
