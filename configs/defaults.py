@@ -23,13 +23,13 @@ feature_headers = {
     'aCompCor': {
         'name': 'aCompCor',
         'link': 'https://fcp-indi.github.io/docs/user/nuisance.html#acompcor',
-        'C-PAC': ['aCompCorPC', 'aCompCor_DetrendPC'],
+        'C-PAC': ['aCompCorPC', 'aCompCor'],
         'fmriprep': 'aCompCor_comp_cor_0'
     },
     'tCompCor': {
         'name': 'tCompCor',
         'link': 'https://fcp-indi.github.io/docs/user/nuisance.html#tcompcor',
-        'C-PAC': ['tCompCorPC', 'tCompCor_DetrendPC'],
+        'C-PAC': ['tCompCorPC', 'tCompCor'],
         'fmriprep': 'tCompCor_comp_cor_0'
     },
     'FD': {

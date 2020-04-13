@@ -264,8 +264,8 @@ class Subject_Session_Feature:
                     f"{run_path}working/"
                     f"resting_preproc_*{subject}{session}/"
                     "nuisance_*_0/_*/_*/"
-                    f"{get_feature_label(feature, 'C-PAC')[1][:-1]}/"
-                    "compcor_regressors.1D"
+                    f"{get_feature_label(feature, 'C-PAC')[1][:-1]}*/"
+                    "*1D"
                 ) if "compcor" in feature.lower(
                 ) else list(chain.from_iterable([
                     glob.glob(
@@ -336,7 +336,7 @@ class Subject_Session_Feature:
         if software=="C-PAC":
             if file.endswith(".1D"):
                 data = Afni1D(file)
-                if file.endswith("compcor_regressors.1D"):
+                if "compcor" in file.lower():
                     return(data.mat[int(feature_label[1][-1])][1:])
                 header = data.header[-1] if len(data.header) else ""
                 header_list = header.split('\t')
@@ -502,8 +502,8 @@ def get_feature_label(feature, software):
     return(feature_headers.get(feature, {}).get(software, "") if (
         "CompCor" not in feature
     ) else [
-        f"{feature[:-1]}PC{feature[-1]}",
-        f"{feature[:-1]}_DetrendPC{feature[-1]}"
+        f"{feature[:-1]}{feature[-1]}",
+        f"{feature[:-1]}_{feature[-1]}"
     ] if (
         software=="C-PAC"
     ) else f"{feature[0]}_comp_cor_0{feature[-1]}" if (
