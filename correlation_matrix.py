@@ -507,8 +507,8 @@ def get_feature_label(feature, software):
     return(feature_headers.get(feature, {}).get(software, "") if (
         "CompCor" not in feature
     ) else [
-        f"{feature[:-1]}PC{feature[-1]}",
-        f"{feature[:-1]}_DetrendPC{feature[-1]}"
+        f"{feature[:-1]}{feature[-1]}",
+        f"{feature[:-1]}_{feature[-1]}"
     ] if (
         software=="C-PAC"
     ) else f"{feature[0]}_comp_cor_0{feature[-1]}" if (
