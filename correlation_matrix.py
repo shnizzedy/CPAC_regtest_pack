@@ -260,6 +260,11 @@ class Subject_Session_Feature:
             subject = str(subject)
             session = f"*{str(session)}*" if session else ""
             if feature in regressor_list:
+                print(f"{run_path}working/"
+                f"resting_preproc_*{subject}{session}/"
+                "nuisance_*_0/_*/_*/"
+                f"{get_feature_label(feature, 'C-PAC')[1][:-1]}*/"
+                "*1D")
                 paths = glob.glob(
                     f"{run_path}working/"
                     f"resting_preproc_*{subject}{session}/"
