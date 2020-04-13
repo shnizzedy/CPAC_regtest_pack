@@ -264,8 +264,8 @@ class Subject_Session_Feature:
                     f"{run_path}working/"
                     f"resting_preproc_*{subject}{session}/"
                     "nuisance_*_0/_*/_*/"
-                    f"{get_feature_label(feature, 'C-PAC')[1][:-1]}/"
-                    "compcor_regressors.1D"
+                    f"{get_feature_label(feature, 'C-PAC')[1][:-1]}*/"
+                    "*1D"
                 ) if "compcor" in feature.lower(
                 ) else list(chain.from_iterable([
                     glob.glob(
