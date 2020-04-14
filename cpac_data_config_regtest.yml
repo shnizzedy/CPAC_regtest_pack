@@ -8,7 +8,7 @@
     rest_acq-1_run-1:
       scan: s3://fcp-indi/data/Projects/ADHD200/RawDataBIDS/KKI/sub-1019436/ses-1/func/sub-1019436_ses-1_task-rest_acq-1_run-1_bold.nii.gz
       scan_parameters: s3://fcp-indi/data/Projects/ADHD200/RawDataBIDS/KKI/task-rest_acq-1_bold.json
-  site: KKI
+  site_id: KKI
   subject_id: '1019436'
   unique_id: '1'
 - anat: s3://fcp-indi/data/Projects/ADHD200/RawDataBIDS/KKI/sub-2014113/ses-1/anat/sub-2014113_ses-1_run-1_T1w.nii.gz
@@ -24,7 +24,7 @@
     rest_acq-2_run-1:
       scan: s3://fcp-indi/data/Projects/ADHD200/RawDataBIDS/KKI/sub-3154996/ses-1/func/sub-3154996_ses-1_task-rest_acq-2_run-1_bold.nii.gz
       scan_parameters: s3://fcp-indi/data/Projects/ADHD200/RawDataBIDS/KKI/task-rest_acq-2_bold.json
-  site: KKI
+  site_id: KKI
   subject_id: '3154996'
   unique_id: '1'
 - anat: s3://fcp-indi/data/Projects/ADHD200/RawDataBIDS/KKI/sub-3699991/ses-1/anat/sub-3699991_ses-1_run-1_T1w.nii.gz
@@ -32,7 +32,7 @@
     rest_acq-1_run-1:
       scan: s3://fcp-indi/data/Projects/ADHD200/RawDataBIDS/KKI/sub-3699991/ses-1/func/sub-3699991_ses-1_task-rest_acq-1_run-1_bold.nii.gz
       scan_parameters: s3://fcp-indi/data/Projects/ADHD200/RawDataBIDS/KKI/task-rest_acq-1_bold.json
-  site: KKI
+  site_id: KKI
   subject_id: '3699991'
   unique_id: '1'
 - anat: s3://fcp-indi/data/Projects/ADHD200/RawDataBIDS/KKI/sub-3884955/ses-1/anat/sub-3884955_ses-1_run-1_T1w.nii.gz
@@ -40,7 +40,7 @@
     rest_acq-2_run-1:
       scan: s3://fcp-indi/data/Projects/ADHD200/RawDataBIDS/KKI/sub-3884955/ses-1/func/sub-3884955_ses-1_task-rest_acq-2_run-1_bold.nii.gz
       scan_parameters: s3://fcp-indi/data/Projects/ADHD200/RawDataBIDS/KKI/task-rest_acq-2_bold.json
-  site: KKI
+  site_id: KKI
   subject_id: '3884955'
   unique_id: '1'
 - anat: s3://fcp-indi/data/Projects/HBN/MRI/Site-CBIC/sub-NDARAA504CRN/anat/sub-NDARAA504CRN_acq-vNavNorm_run-01_T1w.nii.gz
@@ -55,7 +55,7 @@
     task-movieTP:
       scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-CBIC/sub-NDARAA504CRN/func/sub-NDARAA504CRN_task-movieTP_bold.nii.gz
       scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-CBIC/sub-NDARAA504CRN/func/sub-NDARAA504CRN_task-movieTP_bold.json
-  site: Site-CBIC
+  site_id: Site-CBIC
   subject_id: sub-NDARAA504CRN
   unique_id: '1'
 - anat: s3://fcp-indi/data/Projects/HBN/MRI/Site-CBIC/sub-NDARAA947ZG5/anat/sub-NDARAA947ZG5_acq-vNavNorm_run-01_T1w.nii.gz
@@ -70,7 +70,7 @@
     task-movieTP:
       scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-CBIC/sub-NDARAA947ZG5/func/sub-NDARAA947ZG5_task-movieTP_bold.nii.gz
       scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-CBIC/sub-NDARAA947ZG5/func/sub-NDARAA947ZG5_task-movieTP_bold.json
-  site: Site-CBIC
+  site_id: Site-CBIC
   subject_id: sub-NDARAA947ZG5
   unique_id: '1'
 - anat: s3://fcp-indi/data/Projects/HBN/MRI/Site-CBIC/sub-NDARAB348EWR/anat/sub-NDARAB348EWR_acq-vNavNorm_run-01_T1w.nii.gz
@@ -85,7 +85,7 @@
     task-movieTP:
       scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-CBIC/sub-NDARAB348EWR/func/sub-NDARAB348EWR_task-movieTP_bold.nii.gz
       scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-CBIC/sub-NDARAB348EWR/func/sub-NDARAB348EWR_task-movieTP_bold.json
-  site: Site-CBIC
+  site_id: Site-CBIC
   subject_id: sub-NDARAB348EWR
   unique_id: '1'
 - anat: s3://fcp-indi/data/Projects/HBN/MRI/Site-CBIC/sub-NDARAB458VK9/anat/sub-NDARAB458VK9_acq-vNavNorm_run-01_T1w.nii.gz
@@ -100,7 +100,7 @@
     task-movieTP:
       scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-CBIC/sub-NDARAB458VK9/func/sub-NDARAB458VK9_task-movieTP_bold.nii.gz
       scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-CBIC/sub-NDARAB458VK9/func/sub-NDARAB458VK9_task-movieTP_bold.json
-  site: Site-CBIC
+  site_id: Site-CBIC
   subject_id: sub-NDARAB458VK9
   unique_id: '1'
 - anat: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARAD481FXF/anat/sub-NDARAD481FXF_T1w.nii.gz
@@ -118,9 +118,9 @@
     task-rest:
       scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARAD481FXF/func/sub-NDARAD481FXF_task-rest_bold.nii.gz
       scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARAD481FXF/func/sub-NDARAD481FXF_task-rest_bold.json
-  site: Site-SI
+  site_id: Site-SI
   subject_id: sub-NDARAD481FXF
-  unique_id: 1
+  unique_id: '1'
 - anat: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARAV894XWD/anat/sub-NDARAV894XWD_T1w.nii.gz
   fmap:
     diff_mag_one:
@@ -136,9 +136,9 @@
     task-rest:
       scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARAV894XWD/func/sub-NDARAV894XWD_task-rest_bold.nii.gz
       scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARAV894XWD/func/sub-NDARAV894XWD_task-rest_bold.json
-  site: Site-SI
+  site_id: Site-SI
   subject_id: sub-NDARAV894XWD
-  unique_id: 1
+  unique_id: '1'
 - anat: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARCA186WGH/anat/sub-NDARCA186WGH_T1w.nii.gz
   fmap:
     diff_mag_one:
@@ -154,9 +154,9 @@
     task-rest:
       scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARCA186WGH/func/sub-NDARCA186WGH_task-rest_bold.nii.gz
       scan_parameters: s3://fcp-indi/data/Projects/HBN/MRI/Site-SI/sub-NDARCA186WGH/func/sub-NDARCA186WGH_task-rest_bold.json
-  site: Site-SI
+  site_id: Site-SI
   subject_id: sub-NDARCA186WGH
-  unique_id: 1
+  unique_id: '1'
 - anat: s3://fcp-indi/data/Projects/CORR/RawDataBIDS/HNU_1/sub-0025453/ses-1/anat/sub-0025453_ses-1_run-1_T1w.nii.gz
   creds_path: null
   func:

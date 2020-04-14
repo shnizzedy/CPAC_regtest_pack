@@ -23,7 +23,7 @@ then
     sudo docker run -it \
         -v /home/ubuntu:/home/ubuntu \
         -v /media/ebs/CPAC_regtest_pack:/media/ebs/CPAC_regtest_pack \
-        -v /media/ebs/runs/$run_name\_benchmark-ANTS_pre162-nomedian:/output \
+        -v /media/ebs/runs/$run_name\_fmriprep-options:/output \
         --entrypoint bash \
         $docker_image
 else
@@ -38,5 +38,6 @@ else
         --n_cpus 4 \
         --mem_gb 12 \
         --pipeline_override "num_ants_threads: 4" \
-        --pipeline_override "numParticipantsAtOnce: 4"
+        --pipeline_override "numParticipantsAtOnce: 4" \
+        --pipeline_override "template_skull_for_anat: /code/CPAC/resources/templates/mni_icbm152_t1_tal_nlin_asym_09c.nii"
 fi

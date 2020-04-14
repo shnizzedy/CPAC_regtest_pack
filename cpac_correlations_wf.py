@@ -176,15 +176,20 @@ def quick_corr_csv(csv_1, csv_2):
 
 
 def correlate_two_nifti_timeseries(ts1_data, ts2_data, shape):
-    ts_corrs = []
+    ts_pearson = []
+    ts_concordance = []
     for i in range(0, shape[0]):
         for j in range(0, shape[1]):
             for k in range(0, shape[2]):
-                ts_corrs.append(scipy.stats.pearsonr(ts1_data[i][j][k],
-                                                     ts2_data[i][j][k])[0])
-    ts_corrs = np.asarray(ts_corrs)
-    ts_corr = ts_corrs[~np.isnan(ts_corrs)].mean()
-    return ts_corr
+                ts_corrs = correlate(ts1_data[i][j][k],
+                                     ts2_data[i][j][k])
+                ts_pearson.append(ts_corrs[1])
+                ts_concordance.append(ts_corrs[0])
+    ts_pearson = np.asarray(ts_pearson)
+    ts_pearson_mean = ts_pearson[~np.isnan(ts_pearson)].mean()
+    ts_concordance = np.asarray(ts_concordance)
+    ts_concordance_mean = ts_concordance[~np.isnan(ts_concordance)].mean()
+    return ts_concordance_mean, ts_pearson_mean
 
 
 def correlate_text_based(txt1, txt2):
@@ -477,9 +482,8 @@ def calculate_correlation(args_tuple):
         if data_1.flatten().shape == data_2.flatten().shape:
             try:
                 if len(old_file_dims) > 3:
-                    #concor = correlate_two_nifti_timeseries(data_1, data_2, 
-                    #                                        old_file_img.shape)
-                    return None
+                    concor, pearson = correlate_two_nifti_timeseries(data_1, data_2, 
+                                                                     old_file_img.shape)
                 else:
                     concor, pearson = correlate(data_1, data_2)
             except Exception as e:
