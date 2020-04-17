@@ -121,7 +121,7 @@ def generate_heatmap(corrs, var_list, sub_list, save_path=None, title=None):
     fig.tight_layout()
 
     if save_path:
-        plt.savefig(save_path)
+        plt.savefig(save_path, bbox_inches="tight")
     else:
         try:
             from IPython.display import display
