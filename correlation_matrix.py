@@ -59,12 +59,13 @@ def calc_corr(data1, data2):
     ]):
         if isinstance(data1, np.ndarray) and data1.shape == data2.shape:
             return(pearsonr(data1.flatten(), data2.flatten())[0])
-        if len(data1) == len(data2):
+        lens = (len(data1), len(data2))
+        if lens[0]==lens[1]:
             return(pearsonr(data1, data2)[0])
-        if len(data1) == len(data2) + 1:
-            return(pearsonr(data1[1:], data2)[0])
-        if len(data2) == len(data1) + 1:
-            return(pearsonr(data1, data2[1:])[0])
+        if lens[0]>lens[1]:
+            return(pearsonr(data1[lens[0]-lens[1]:], data2)[0])
+        if lens[0]<lens[1]:
+            return(pearsonr(data1, data2[lens[1]-lens[0]:])[0])
     return(float(np.nan))
 
 
@@ -206,14 +207,14 @@ class Subject_Session_Feature:
             self.session = None
         self.feature = feature
         self.paths = (
-            self.get_path(
+            self.get_paths(
                 self.subject,
                 self.feature,
                 runs[0]["run_path"],
                 runs[0]["software"],
                 self.session
             ),
-            self.get_path(
+            self.get_paths(
                 self.subject,
                 self.feature,
                 runs[1]["run_path"],
@@ -233,8 +234,12 @@ class Subject_Session_Feature:
                 runs[1]["software"]
             )
         )
+        if self.data[0] is not None:
+            print(f"{runs[0]['software']} {self.feature}: {len(self.data[0])}")
+        if self.data[1] is not None:
+            print(f"{runs[1]['software']} {self.feature}: {len(self.data[1])}")
 
-    def get_path(self, subject, feature, run_path, software="C-PAC",
+    def get_paths(self, subject, feature, run_path, software="C-PAC",
         session=None):
         """
         Method to find a path to specific outputs
@@ -253,7 +258,7 @@ class Subject_Session_Feature:
 
         Returns
         -------
-        path: str
+        paths: list of str
         """
         paths = []
         if software.lower() in ["cpac", "c-pac"]:
@@ -302,16 +307,16 @@ class Subject_Session_Feature:
                     "func_preproc_task_rest_run_1_wf/"
                     "bold_confounds_wf/fdisp/fd_power_2012.txt"
                 ]
-        return(paths[0] if len(paths) else None)
+        return(paths if len(paths) else [])
 
-    def read_feature(self, file, feature, software="C-PAC"):
+    def read_feature(self, files, feature, software="C-PAC"):
         """
         Method to read a feature from a given file
 
         Parameters
         ----------
-        file: str
-            path to file
+        files: list of str
+            paths to files
 
         feature: str
 
@@ -321,7 +326,7 @@ class Subject_Session_Feature:
         -------
         feature: np.ndarray or list or None
         """
-        if file is None:
+        if not files:
             return(None)
         software = "C-PAC" if software.lower() in [
             "c-pac",
@@ -330,44 +335,45 @@ class Subject_Session_Feature:
 
         feature_label = get_feature_label(feature, software)
 
-        print(file)
-        print(feature_label)
-
         if software=="C-PAC":
-            if file.endswith(".1D"):
-                data = Afni1D(file)
-                if "compcor" in file.lower():
-                    return(data.mat[int(feature_label[1][-1])][1:])
-                header = data.header[-1] if len(data.header) else ""
-                header_list = header.split('\t')
-                if isinstance(feature_label, list):
-                    for fl in feature_label:
-                        if(fl in header_list):
-                            return(data.mat[header_list.index(fl)])
-                else:
-                    return(
-                        data.mat[header_list.index(feature_label)] if (
-                            feature_label in header_list
-                        ) else data.mat[0][1:] if (
-                            len(data.mat[:])==1
-                        ) else ([None] * len(data.mat[0][1:]))
-                    )
-            elif file.endswith('.csv'):
-                return(list(pd.read_csv(
-                    file,
-                    sep="\t"
-                )["Sub-brick"][1:].dropna().astype(float).values))
+            for file in files:
+                if file.endswith(".1D"):
+                    data = Afni1D(file)
+                    if "compcor" in file.lower():
+                        return(data.mat[int(feature_label[1][-1])][1:])
+                    header = data.header[-1] if len(data.header) else ""
+                    header_list = header.split('\t')
+                    if isinstance(feature_label, list):
+                        for fl in feature_label:
+                            if(fl in header_list):
+                                return(data.mat[header_list.index(fl)])
+                    else:
+                        return(
+                            data.mat[header_list.index(feature_label)] if (
+                                feature_label in header_list
+                            ) else data.mat[0][1:] if (
+                                len(data.mat[:])==1
+                            ) else ([None] * len(data.mat[0][1:]))
+                        )
+                elif file.endswith('.csv'):
+                    return(list(pd.read_csv(
+                        file,
+                        sep="\t"
+                    )["Sub-brick"][1:].dropna().astype(float).values))
 
         elif software=="fmriprep":
-            if file.endswith(".tsv"):
-                data = pd.read_csv(file, sep='\t')
-                if feature_label in data.columns:
-                    return(data[feature_label])
-            elif file.endswith(".txt"):
-                with open(file) as f:
-                    return([
-                        float(x) for x in [x.strip() for x in f.readlines()][1:]
-                    ])
+            for file in files:
+                if file.endswith(".tsv"):
+                    data = pd.read_csv(file, sep='\t')
+                    if feature_label in data.columns:
+                        return(data[feature_label])
+                elif file.endswith(".txt"):
+                    with open(file) as f:
+                        return([
+                            float(x) for x in [
+                                x.strip() for x in f.readlines()
+                            ][1:]
+                        ])
 
         return(None)
 
@@ -415,11 +421,7 @@ class Correlation_Matrix:
             [[
                 "Not found" if not
                 self.data[sub][feat].paths[i] else (
-                    self.data[sub][feat].paths[i].replace(
-                        self.runs[i]["run_path"], "", 1
-                    ) if self.data[sub][feat].paths[i].startswith(
-                        self.runs[i]["run_path"]
-                    ) else self.data[sub][feat].paths[i]
+                    self._join_paths(self.data[sub][feat].paths, i)
                 ) for i in range(2)
             ] for sub in self.data for feat in self.data[sub]],
             columns=columns,
@@ -433,11 +435,7 @@ class Correlation_Matrix:
                 [[
                     f"\u001b[3m\u001b[31mNot found\u001b[0m{' '*13}" if not
                     self.data[sub][feat].paths[i] else wrap(
-                        self.data[sub][feat].paths[i].replace(
-                            self.runs[i]["run_path"], "", 1
-                        ) if self.data[sub][feat].paths[i].startswith(
-                            self.runs[i]["run_path"]
-                        ) else self.data[sub][feat].paths[i]
+                        self._join_paths(self.data[sub][feat].paths, i)
                     ) for i in range(2)
                 ] for sub in self.data for feat in self.data[sub]],
                 columns=plaintext_columns,
@@ -496,6 +494,17 @@ class Correlation_Matrix:
         for i, subject in enumerate(self.data):
             for j, feature in enumerate(self.data[subject]):
                 self.run_correlation(i, j, *self.data[subject][feature].data)
+
+    def _join_paths(self, data_paths, index):
+        return(
+            "\n".join([
+                data_path.replace(
+                    self.runs[index]["run_path"], "", 1
+                ) if data_path.startswith(
+                    self.runs[index]["run_path"]
+                ) else data_path for data_path in data_paths[index]
+            ])
+        )
 
 
 def get_feature_label(feature, software):
