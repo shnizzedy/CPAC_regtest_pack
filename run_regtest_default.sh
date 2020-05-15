@@ -23,19 +23,19 @@ then
     sudo docker run -it \
         -v /home/ubuntu:/home/ubuntu \
         -v /media/ebs/CPAC_regtest_pack:/media/ebs/CPAC_regtest_pack \
-        -v /media/ebs/runs/default-pipeline-noSCA_$run_name:/output \
+        -v /media/ebs/runs/$run_name\_default-pipeline:/output \
         --entrypoint bash \
         $docker_image
 else
     sudo docker run \
         -v /home/ubuntu:/home/ubuntu \
         -v /media/ebs/CPAC_regtest_pack:/media/ebs/CPAC_regtest_pack \
-        -v /media/ebs/runs/$run_name\_default-pipeline-noSCA:/output \
+        -v /media/ebs/runs/$run_name\_default-pipeline:/output \
         $docker_image /home/ubuntu /output participant \
         --save_working_dir \
         --data_config_file /media/ebs/CPAC_regtest_pack/cpac_data_config_regtest.yml \
-        --n_cpus 4 \
+        --n_cpus 32 \
         --mem_gb 12 \
-        --pipeline_override "num_ants_threads: 3" \
-        --pipeline_override "numParticipantsAtOnce: 4"
+        --pipeline_override "num_ants_threads: 16" \
+        --pipeline_override "numParticipantsAtOnce: 1"
 fi

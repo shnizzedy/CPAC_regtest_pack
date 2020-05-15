@@ -47,9 +47,9 @@ else
         --save_working_dir \
         --data_config_file /media/ebs/CPAC_regtest_pack/cpac_data_config_regtest_ALREADY-BRAIN.yml \
         --preconfig benchmark-ANTS \
-        --n_cpus 4 \
+        --n_cpus 2 \
         --mem_gb 12 \
-        --pipeline_override "num_ants_threads: 4" \
+        --pipeline_override "num_ants_threads: 2" \
         --pipeline_override "numParticipantsAtOnce: 8" \
         --pipeline_override "runICA: [0]" \
         --pipeline_override "already_skullstripped: [1]"

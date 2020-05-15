@@ -1,0 +1,21 @@
+settings:
+  n_cpus: 1
+  correlations_dir:
+  run_name:
+  s3_creds: None
+  quick: False
+  verbose: False
+
+pipelines:
+  pipeline_1:
+    output_dir:
+    work_dir:
+    log_dir:
+    pipe_config:
+    replacements: [(None, None), (None, None)]
+  pipeline_2:
+    output_dir:
+    work_dir:
+    log_dir:
+    pipe_config:
+    replacements: [(None, None), (None, None)]
