@@ -1,0 +1,29 @@
+version: 2
+jobs:
+  pytest:
+    docker:
+      - image: circleci/python:3.7.3
+    steps:
+      - checkout
+      - run:
+          name: pytest
+          command: |
+            export PATH=/home/circleci/.local/bin:$PATH
+            mkdir test-results
+            pip install --user -r requirements.txt
+            set +e
+            coverage run -m pytest --junitxml=test-results/junit.xml
+            coverage report --include="./*" --omit="/home/circleci/.local/*"
+            coverage html --include="./*" --omit="/home/circleci/.local/*"
+      - store_test_results:
+          path: test-results
+      - store_artifacts:
+          path: test-results
+      - store_artifacts:
+          path: htmlcov
+
+workflows:
+  version: 2
+  unit_tests:
+    jobs:
+      - pytest
