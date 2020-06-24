@@ -2,7 +2,10 @@
 
 def test_create_unique_file_dict():
 
-    from cpac_correlations_wf import create_unique_file_dict
+    try:
+        from cpac_correlations_wf import create_unique_file_dict
+    except ModuleNotFoundError:
+        from .cpac_correlations_wf import create_unique_file_dict
 
     filepaths = [
       "/path/sub001/centrality_outputs/_scan_rest_1/degree_centrality_weighted.nii.gz",
@@ -39,7 +42,10 @@ def test_create_unique_file_dict():
 
 def test_create_unique_file_dict_with_replacements():
 
-    from cpac_correlations_wf import create_unique_file_dict
+    try:
+        from cpac_correlations_wf import create_unique_file_dict
+    except ModuleNotFoundError:
+        from .cpac_correlations_wf import create_unique_file_dict
 
     filepaths = [
       "/path/sub001_site1/centrality_outputs/_scan_rest_1/degree_centrality_weighted.nii.gz",
@@ -79,7 +85,10 @@ def test_create_unique_file_dict_with_replacements():
 
 def test_match_filepaths():
 
-    from cpac_correlations_wf import match_filepaths
+    try:
+        from cpac_correlations_wf import match_filepaths
+    except ModuleNotFoundError:
+        from .cpac_correlations_wf import match_filepaths
 
     old_files_dict = {
       'alff_to_standard_smooth':
