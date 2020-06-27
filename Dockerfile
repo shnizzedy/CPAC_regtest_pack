@@ -5,6 +5,9 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update
 
+# Install Docker
+RUN apt-get install -y docker-cli
+
 # Install Singularity
 # v2.5.2
 RUN apt-get install -y \
