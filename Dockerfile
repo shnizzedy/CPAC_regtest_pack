@@ -6,7 +6,20 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update
 
 # Install Docker
-RUN apt-get install -y docker-cli
+ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DontWarn
+RUN apt-get install -y \
+      apt-transport-https \
+      ca-certificates \
+      wget \
+      gnupg-agent \
+      software-properties-common && \
+    wget --no-check-certificate -qO - https://download.docker.com/linux/ubuntu/gpg | apt-key add - && \
+    add-apt-repository \
+      "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+      $(lsb_release -cs) \
+      edge" && \
+    apt-get install -y docker-ce-cli
+ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=Warn
 
 # Install Singularity
 # v2.5.2
@@ -35,7 +48,6 @@ ENV PATH="/opt/singularity-2.5.2/bin:${PATH}"
 RUN apt-get install -y \
       build-essential \
       libgpgme-dev \
-      wget \
       pkg-config \
       cryptsetup-bin && \
       export VERSION=1.14.4 OS=linux ARCH=amd64 && \
