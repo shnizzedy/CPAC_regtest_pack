@@ -49,9 +49,15 @@ RUN apt-get install -y \
       make -C ./builddir install && \
       cd ..
       
-RUN wget --content-disposition https://s3.amazonaws.com/fcp-indi/resources/benchmark_package.tar.gz && \
+RUN wget --content-disposition \
+      https://s3.amazonaws.com/fcp-indi/resources/benchmark_package.tar.gz && \
       tar -xvf benchmark_package.tar.gz && \
       rm benchmark_package.tar.gz
+      
+# Get sample BIDS data
+RUN mkdir -p /home/circleci/ && \
+       git clone https://github.com/bids-standard/bids-examples.git \
+       /home/circleci/bids-examples
       
 ENTRYPOINT ["/bin/bash"]
 
