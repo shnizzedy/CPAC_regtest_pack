@@ -24,6 +24,10 @@ RUN apt-get install -y \
       ./configure --prefix=/opt/singularity-2.5.2 --sysconfdir=/etc && \
       make && \
       make install
+
+# set default Singularity @ 2.5.2
+ENV PATH="/opt/singularity-2.5.2/bin:${PATH}"
+
 # v.3.5.3
 RUN apt-get install -y \
       build-essential \
@@ -44,6 +48,10 @@ RUN apt-get install -y \
       make -C ./builddir && \
       make -C ./builddir install && \
       cd ..
+      
+RUN wget --content-disposition https://s3.amazonaws.com/fcp-indi/resources/benchmark_package.tar.gz && \
+      tar -xvf benchmark_package.tar.gz && \
+      rm benchmark_package.tar.gz
       
 ENTRYPOINT ["/bin/bash"]
 
