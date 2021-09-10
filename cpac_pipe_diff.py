@@ -59,7 +59,7 @@ def main():
     diff_dct = dct_diff(pipe_dct1, pipe_dct2)
 
     for key in diff_dct:
-        print("{0}: {1}".format(key, diff_dct[key]))
+        print("{0}:\n{1}\n\n".format(key, diff_dct[key]))
 
 
 if __name__ == "__main__":
