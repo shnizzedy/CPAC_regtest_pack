@@ -33,15 +33,15 @@ bids_dir=/home/ubuntu # keep as /home/ubuntu when providing a data_config
 #bids_dir="s3://fcp-indi/data/etc."
 
 # Pipeline
-#pipe_config="/media/ebs/runs/configs/pipeline_config_regtest-4.yml"
-preconfig="fmriprep-options" # preconfig will override pipe_config
+pipe_config="/media/ebs/runs/configs/pipe_fmriprep-opts_antsmult.yml"
+#preconfig="fmriprep-options" # preconfig will override pipe_config
 
 
 # Run settings
-cpu_max=8
-n_cpus=8
-ants_cpus=4
-mem_gb=15
+cpu_max=16
+n_cpus=16
+ants_cpus=10
+mem_gb=20
 #-------------------------
 
 if [[ -z "$data_config" ]]

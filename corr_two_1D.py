@@ -43,7 +43,7 @@ elif "spatial_map_timeseries.txt" in oned_one_file or ".par" in oned_one_file:
 else:
 
     with open(oned_one_file, 'r') as f:
-	lines = f.readlines()
+        lines = f.readlines()
 
     line_idx = 0
     delimiter = ','
@@ -69,16 +69,16 @@ else:
     oned_one = pd.read_csv(oned_one_file, delimiter=delimiter, header=header_line).dropna(axis=1)
     oned_two = pd.read_csv(oned_two_file, delimiter=delimiter, header=header_line).dropna(axis=1)
 
-    if col:
-        if '#' in col:
-            cols = [col.replace('#','')]
+    if cols:
+        if '#' in cols:
+            cols = [cols.replace('#','')]
     else:
         cols = [x.replace('#','') for x in oned_one.columns if isinstance(x, str)]
 
     if not cols:
         cols = range(0,oned_one.shape[1])
 
-    corrs = np.asarray([scipy.stats.pearsonr(oned_one.values.T[x], oned_two.values.T[x])[0] for x in cols])
+    corrs = np.asarray([f"{val}: {scipy.stats.pearsonr(oned_one.values.T[x], oned_two.values.T[x])[0]}" for x, val in enumerate(cols)])
 
 for corr in corrs:
     print(corr)
