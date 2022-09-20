@@ -26,9 +26,9 @@ mode=$6
 repo="/media/ebs/C-PAC"
 
 # Run settings
-n_cpus=8
-ants_cpus=4
-mem_gb=15
+n_cpus=30
+ants_cpus=15
+mem_gb=30
 
 # Automated args
 #-------------------------
