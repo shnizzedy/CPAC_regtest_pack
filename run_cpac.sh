@@ -26,9 +26,9 @@ mode=$6
 repo="/media/ebs/C-PAC"
 
 # Run settings
-n_cpus=8
-ants_cpus=4
-mem_gb=15
+n_cpus=30
+ants_cpus=15
+mem_gb=45
 
 # Automated args
 #-------------------------
@@ -43,7 +43,7 @@ fi
 
 if [[ "${pipe}" == "default" ]]
 then
-    pipe=""
+    pipe_config=""
     preconfig=""
 elif [[ "${pipe}" == *".yml" || "${pipe}" == *".yaml" ]]
 then
@@ -117,12 +117,13 @@ then
         -v $repo/CPAC:/code/CPAC \
         -v $repo/dev/docker_data/run.py:/code/run.py \
         -v $repo/dev/docker_data:/cpac_resources \
-        -v $repo/dev/docker_data/bids_utils.py:/code/bids_utils.py \
-        -v $repo/dev/docker_data/default_pipeline.yml:/code/default_pipeline.yml \
         -v /home/ubuntu:/home/ubuntu \
 	-v /media/ebs:/media/ebs \
         -v /media/ebs/CPAC_regtest_pack:/media/ebs/CPAC_regtest_pack \
         -v /media/ebs/runs/$run_name:/output \
+	$bids_map \
+	$data_map \
+	$pipe_map \
         --entrypoint bash \
         $docker_image
 elif [[ $mode = "current" ]]
@@ -131,8 +132,6 @@ then
         -v $repo/CPAC:/code/CPAC \
         -v $repo/dev/docker_data/run.py:/code/run.py \
         -v $repo/dev/docker_data:/cpac_resources \
-        -v $repo/dev/docker_data/bids_utils.py:/code/bids_utils.py \
-        -v $repo/dev/docker_data/default_pipeline.yml:/code/default_pipeline.yml \
         -v /home/ubuntu:/home/ubuntu \
 	-v /media/ebs:/media/ebs \
         -v /media/ebs/CPAC_regtest_pack:/media/ebs/CPAC_regtest_pack \
