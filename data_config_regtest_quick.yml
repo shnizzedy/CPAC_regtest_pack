@@ -1,13 +1,6 @@
-# CPAC Data Configuration File
-# Version 1.4.3
-#
-# http://fcp-indi.github.io for more info.
-#
-# Tip: This file can be edited manually with a text editor for quick modifications.
-
-
 # ADHD200 data
-#     for a large number of participants for group-level analyses
+# #     for a large number of participants for group-level analyses
+
 - anat: s3://fcp-indi/data/Projects/ADHD200/RawDataBIDS/KKI/sub-1019436/ses-1/anat/sub-1019436_ses-1_run-1_T1w.nii.gz
   func:
     rest_acq-1_run-1:

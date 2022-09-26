@@ -88,7 +88,7 @@
   site_id: Site-CBIC
   subject_id: sub-NDARAB348EWR
   unique_id: '1'
-- anat: s3://fcp-indi/data/Projects/HBN/MRI/Site-CBIC/sub-NDARAB458VK9/anat/sub-NDARAB458VK9_acq-vNavNorm_run-01_T1w.nii.gz
+- anat: s3://fcp-indi/data/Projects/HBN/MRI/Site-CBIC/sub-NDARAB458VK9/anat/sub-NDARAB458VK9_acq-VNavNorm_run-01_T1w.nii.gz
   fmap:
     epi_AP:
       scan: s3://fcp-indi/data/Projects/HBN/MRI/Site-CBIC/sub-NDARAB458VK9/fmap/sub-NDARAB458VK9_dir-AP_acq-fMRI_epi.nii.gz

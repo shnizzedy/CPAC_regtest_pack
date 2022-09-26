@@ -21,7 +21,9 @@ def read_yaml_file(yaml_file):
     ...     'pipeline_setup']['pipeline_name']
     'cpac-default-pipeline'
     '''
-    return yaml.safe_load(open(yaml_file, 'r'))
+    with open(yaml_file, 'r') as f:
+        yaml_dct = yaml.safe_load(f)
+    return yaml_dct
 
 
 def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
@@ -101,4 +103,8 @@ def main():
     diff_dct = dct_diff(pipe_dct1, pipe_dct2)
 
     for key in diff_dct:
-        print("{0}: {1}".format(key, diff_dct[key]))
+        print("{0}:\n{1}\n\n".format(key, diff_dct[key]))
+
+
+if __name__ == "__main__":
+    main()
