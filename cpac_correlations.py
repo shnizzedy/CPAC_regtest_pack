@@ -909,7 +909,7 @@ def create_boxplot(corr_group, corr_group_name, pipeline_names=None,
                                     list(pipeline_names)[0] +
                                     "_and_" + list(pipeline_names)[1]))
 
-    pyplot.savefig('{0}.pdf'.format(output_filename), format='pdf', dpi=200, bbox_inches='tight')
+    pyplot.savefig('{0}.png'.format(output_filename), format='png', dpi=200, bbox_inches='tight')
     pyplot.close()
 
 
