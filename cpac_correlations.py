@@ -15,8 +15,8 @@ import itertools
 Axis = Union[int, Tuple[int, ...]]
 
 class CorrValue(NamedTuple):
-    ccc: np.ndarray
-    rho: np.ndarray
+    concor: np.ndarray
+    pearson: np.ndarray
 
 
 def read_yml_file(yml_filepath):
@@ -170,17 +170,15 @@ def batch_correlate(
     y_std = np.sqrt(y_var)
     y_norm = (y - y_mean) / y_std
 
-    # Pearson correlation
-    rho = np.mean(x_norm * y_norm, axis=axis, keepdims=True)
-
-    # Concordance correlation
-    ccc = 2 * rho * x_std * y_std / (x_var + y_var + (x_mean - y_mean) ** 2)
+    # Correlation coefficients
+    pearson = np.mean(x_norm * y_norm, axis=axis, keepdims=True)
+    concor = 2 * pearson * x_std * y_std / (x_var + y_var + (x_mean - y_mean) ** 2)
 
     # Squeeze reduced singleton dimensions
     if axis is not None:
-        ccc = np.squeeze(ccc, axis=axis)
-        rho = np.squeeze(rho, axis=axis)
-    return CorrValue(ccc, rho)
+        concor = np.squeeze(concor, axis=axis)
+        pearson = np.squeeze(pearson, axis=axis)
+    return CorrValue(concor, pearson)
 
 
 def correlate_text_based(txt1, txt2):
