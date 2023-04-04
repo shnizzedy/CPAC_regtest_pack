@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from typing import Optional, NamedTuple, Tuple, Union
+
 import os
 import glob
 import numpy as np
@@ -9,6 +11,12 @@ import pandas as pd
 
 from multiprocessing import Pool
 import itertools
+
+Axis = Union[int, Tuple[int, ...]]
+
+class CorrValue(NamedTuple):
+    concor: np.ndarray
+    pearson: np.ndarray
 
 
 def read_yml_file(yml_filepath):
@@ -139,86 +147,49 @@ def parse_csv_data(csv_lines):
     return csv_np_data
 
 
-def concordance(x, y, rho):
+def batch_correlate(
+    x: np.ndarray, y: np.ndarray, axis: Optional[Axis] = None
+) -> CorrValue:
     """
-    Calculates Lin's concordance correlation coefficient.
+    Compute a batch of concordance and Pearson correlation coefficients between
+    x and y along an axis (or axes).
 
-    Usage: concordence(x, y) where x, y are equal-length arrays
-    Returns: concordance correlation coefficient
-
-    Note: strict than pearson
+    References:
+        https://en.wikipedia.org/wiki/Concordance_correlation_coefficient
     """
+    # Summary stats for x
+    x_mean = np.mean(x, axis=axis, keepdims=True)
+    x_var = np.var(x, axis=axis, keepdims=True)
+    x_std = np.sqrt(x_var)
+    # NOTE: Not trying to fix NaNs
+    x_norm = (x - x_mean) / x_std
 
-    import math
-    import numpy as np
+    # Summary stats for y
+    y_mean = np.mean(y, axis=axis, keepdims=True)
+    y_var = np.var(y, axis=axis, keepdims=True)
+    y_std = np.sqrt(y_var)
+    y_norm = (y - y_mean) / y_std
 
-    map(float, x)
-    map(float, y)
-    xvar = np.var(x)
-    yvar = np.var(y)
-    #rho = scipy.stats.pearsonr(x, y)[0]
-    #p = np.corrcoef(x,y)  # numpy version of pearson correlation coefficient
-    ccc = 2. * rho * math.sqrt(xvar) * math.sqrt(yvar) / (xvar + yvar + (np.mean(x) - np.mean(y))**2)
+    # Correlation coefficients
+    pearson = np.mean(x_norm * y_norm, axis=axis, keepdims=True)
+    concor = 2 * pearson * x_std * y_std / (x_var + y_var + (x_mean - y_mean) ** 2)
 
-    return ccc
-
-
-def correlate(data_1, data_2):
-    pearson = scipy.stats.pearsonr(data_1.flatten(), data_2.flatten())[0]
-    concor = concordance(data_1.flatten(), data_2.flatten(), pearson)
-    return (concor, pearson)
-
-
-def quick_corr_csv(csv_1, csv_2):
-    csv_1_lines = read_txt_file(csv_1)
-    csv_2_lines = read_txt_file(csv_2)
-    csv_1_data = parse_csv_data(csv_1_lines)
-    csv_2_data = parse_csv_data(csv_2_lines)
-    if csv_1_data.flatten().shape == csv_2_data.flatten().shape:
-        concor, pearson = correlate(csv_1_data, csv_2_data)
-    print(concor)
-
-
-def correlate_two_nifti_timeseries(ts1_data, ts2_data, shape):
-    ts_pearson = []
-    ts_concordance = []
-    for i in range(0, shape[0]):
-        for j in range(0, shape[1]):
-            for k in range(0, shape[2]):
-                ts_corrs = correlate(ts1_data[i][j][k],
-                                     ts2_data[i][j][k])
-                ts_pearson.append(ts_corrs[1])
-                ts_concordance.append(ts_corrs[0])
-    ts_pearson = np.asarray(ts_pearson)
-    ts_pearson_mean = ts_pearson[~np.isnan(ts_pearson)].mean()
-    ts_concordance = np.asarray(ts_concordance)
-    ts_concordance_mean = ts_concordance[~np.isnan(ts_concordance)].mean()
-    return ts_concordance_mean, ts_pearson_mean
+    # Squeeze reduced singleton dimensions
+    if axis is not None:
+        concor = np.squeeze(concor, axis=axis)
+        pearson = np.squeeze(pearson, axis=axis)
+    return CorrValue(concor, pearson)
 
 
 def correlate_text_based(txt1, txt2):
-    with open(txt1, 'r') as f:
-        lines = f.readlines()
+    # TODO: why do we drop columns containing na?
+    oned_one = pd.read_csv(txt1, delimiter=None, comment="#").dropna(axis=1).values
+    oned_two = pd.read_csv(txt2, delimiter=None, comment="#").dropna(axis=1).values
 
-    line_idx = 0
-    delimiter = ','
-    for line in lines:
-        if '#' in line:
-            line_idx += 1
-        else:
-            if ',' in line:
-                delimiter = ','
-            elif '\t' in line:
-                delimiter = '\t'
-            break
-
-    oned_one = pd.read_csv(txt1, delimiter=delimiter, header=line_idx-1).dropna(axis=1)
-    oned_two = pd.read_csv(txt2, delimiter=delimiter, header=line_idx-1).dropna(axis=1)
-
-    pearson_mean = np.asarray([scipy.stats.pearsonr(oned_one[x], oned_two[x])[0] for x in oned_one.columns]).mean()
-    concor_mean = np.asarray([concordance(oned_one[x], oned_two[x], scipy.stats.pearsonr(oned_one[x], oned_two[x])[0]) for x in oned_one.columns]).mean()
-
-    return (concor_mean, pearson_mean)
+    concor, pearson = batch_correlate(oned_one, oned_two, axis=0)
+    concor = np.nanmean(concor)
+    pearson = np.nanmean(pearson)
+    return concor, pearson
 
 
 def create_unique_file_dict(filepaths, output_folder_path, replacements=None):
@@ -489,8 +460,6 @@ def calculate_correlation(args_tuple):
     import scipy.stats.mstats
     import scipy.stats
     import math
-
-    from cpac_correlations import download_from_s3, concordance
    
     category = args_tuple[0]
     old_path = args_tuple[1]
@@ -603,10 +572,12 @@ def calculate_correlation(args_tuple):
         if data_1.flatten().shape == data_2.flatten().shape:
             try:
                 if len(old_file_dims) > 3:
-                    concor, pearson = correlate_two_nifti_timeseries(data_1, data_2, 
-                                                                     old_file_img.shape)
+                    axis = tuple(range(3, len(old_file_dims)))
+                    concor, pearson = batch_correlate(data_1, data_2, axis=axis)
+                    concor = np.nanmean(concor)
+                    pearson = np.nanmean(pearson)
                 else:
-                    concor, pearson = correlate(data_1, data_2)
+                    concor, pearson = batch_correlate(data_1, data_2)
             except Exception as e:
                 corr_tuple = ("correlating problem: {0}".format(e), 
                               old_path, new_path)
@@ -688,8 +659,6 @@ def run_correlations(matched_dct, input_dct, source='output_dir', quick=False, v
                 args_list.append((category, old_path, new_path, output_dir, s3_creds, verbose))
 
     print("\nNumber of correlations to calculate: {0}\n".format(len(args_list)))
-
-    from cpac_correlations import calculate_correlation
 
     print("Running correlations...")
     p = Pool(input_dct['settings']['n_cpus'])
