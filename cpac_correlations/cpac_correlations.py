@@ -1140,3 +1140,37 @@ def main() -> tuple:
 
 if __name__ == "__main__":
     main()
+
+cpac_correlations = main
+
+__all__ = [
+    "batch_correlate",
+    "calculate_correlation",
+    "compare_pipelines",
+    "correlate_text_based",
+    "CorrValue",
+    "cpac_correlations",
+    "create_boxplot",
+    "create_unique_file_dict",
+    "delimiter_from_filepath",
+    "download_from_s3",
+    "gather_all_files",
+    "gather_local_filepaths",
+    "main",
+    "match_filepaths",
+    "organize_correlations",
+    "parse_csv_data",
+    "post180_organize_correlations",
+    "pull_NIFTI_file_list_from_s3",
+    "quick_summary",
+    "read_pickle",
+    "read_txt_file",
+    "read_yml_file",
+    "report_missing",
+    "run_correlations",
+    "SummaryStats",
+    "write_dct",
+    "write_pickle",
+    "write_txt_file",
+    "write_yml_file",
+]
