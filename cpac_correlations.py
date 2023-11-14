@@ -938,7 +938,7 @@ def create_boxplot(corr_group, corr_group_name, pipeline_names=None, current_dir
         if "file reading problem" in label:
             continue
         try:
-            allData.append(np.asarray(corr_group[label]).astype(np.float))
+            allData.append(np.asarray(corr_group[label]).astype(float))
         except ValueError as ve:
             continue
             # raise Exception(ve)
