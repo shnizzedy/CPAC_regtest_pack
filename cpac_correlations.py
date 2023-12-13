@@ -158,20 +158,20 @@ def batch_correlate(
         https://en.wikipedia.org/wiki/Concordance_correlation_coefficient
     """
     # Summary stats for x
-    x_mean = np.mean(x, axis=axis, keepdims=True)
-    x_var = np.var(x, axis=axis, keepdims=True)
+    x_mean = np.mean(x, axis=axis)
+    x_var = np.var(x, axis=axis)
     x_std = np.sqrt(x_var)
     # NOTE: Not trying to fix NaNs
     x_norm = (x - x_mean) / x_std
 
     # Summary stats for y
-    y_mean = np.mean(y, axis=axis, keepdims=True)
-    y_var = np.var(y, axis=axis, keepdims=True)
+    y_mean = np.mean(y, axis=axis)
+    y_var = np.var(y, axis=axis)
     y_std = np.sqrt(y_var)
     y_norm = (y - y_mean) / y_std
 
     # Correlation coefficients
-    pearson = np.mean(x_norm * y_norm, axis=axis, keepdims=True)
+    pearson = np.mean(x_norm * y_norm, axis=axis)
     concor = 2 * pearson * x_std * y_std / (x_var + y_var + (x_mean - y_mean) ** 2)
 
     # Squeeze reduced singleton dimensions
@@ -558,8 +558,8 @@ def calculate_correlation(args_tuple):
                 old_file_dims = old_file_hdr.get_zooms()
                 new_file_dims = new_file_hdr.get_zooms()
 
-                data_1 = nb.load(old_path).get_data()
-                data_2 = nb.load(new_path).get_data()
+                data_1 = nb.load(old_path).get_fdata()
+                data_2 = nb.load(new_path).get_fdata()
 
             except Exception as e:
                 corr_tuple = ("file reading problem: {0}".format(e), 
@@ -858,7 +858,7 @@ def create_boxplot(corr_group, corr_group_name, pipeline_names=None,
         if "file reading problem" in label:
             continue
         try:
-            allData.append(np.asarray(corr_group[label]).astype(np.float))
+            allData.append(np.asarray(corr_group[label]).astype(float))
         except ValueError as ve:
             continue
             #raise Exception(ve)
