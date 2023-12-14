@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 import argparse
 import os
 import pickle
@@ -95,8 +96,8 @@ class SummaryStats:
     def __init__(
         self, array: np.ndarray, axis: Optional[Union[int, str]] = None
     ) -> None:
-        self.mean = np.mean(array, axis=axis, keepdims=True)
-        self.var = np.var(array, axis=axis, keepdims=True)
+        self.mean = np.mean(array, axis=axis)
+        self.var = np.var(array, axis=axis)
         self.std = np.sqrt(self.var)
         self.norm = (array - self.mean) / self.std
 
@@ -127,15 +128,13 @@ def pull_NIFTI_file_list_from_s3(s3_directory, s3_creds):
             s3_list.append(os.path.join("s3://", bucket_name, str(bk.key)))
 
     if len(s3_list) == 0:
-        err = "\n\n[!] No filepaths were found given the S3 path provided!" "\n\n"
+        err = "\n\n[!] No filepaths were found given the S3 path provided!\n\n"
         raise Exception(err)
 
     return s3_list
 
 
 def download_from_s3(s3_path, local_path, s3_creds):
-    import os
-
     try:
         from indi_aws import aws_utils, fetch_creds
     except:
@@ -187,9 +186,7 @@ def batch_correlate(
         return CorrValue(np.nan, np.nan)
 
     # Correlation coefficients
-    pearson = np.mean(
-        summary_stats["x"].norm * summary_stats["y"].norm, axis=axis, keepdims=True
-    )
+    pearson = np.mean(summary_stats["x"].norm * summary_stats["y"].norm, axis=axis)
     concor = (
         2
         * pearson
@@ -202,7 +199,7 @@ def batch_correlate(
         )
     )
     # Squeeze reduced singleton dimensions
-    if axis is not None:
+    if axis is not None and 1 in concor.shape:
         concor = np.squeeze(concor, axis=axis)
         pearson = np.squeeze(pearson, axis=axis)
     return CorrValue(concor, pearson)
@@ -268,7 +265,6 @@ def create_unique_file_dict(
         files_dict["centrality"] =
             {("centrality", midpath, nums): <filepath>, ..}
     """
-
     files_dict = {}
 
     for filepath in filepaths:
@@ -648,11 +644,11 @@ def calculate_correlation(args_tuple):
             old_file_dims = old_file_hdr.get_zooms()
             # new_file_dims = new_file_hdr.get_zooms()
 
-            data_1 = nb.load(old_path).get_data()
-            data_2 = nb.load(new_path).get_data()
+            data_1 = nb.load(old_path).get_fdata()
+            data_2 = nb.load(new_path).get_fdata()
 
         except Exception as e:
-            corr_tuple = ("file reading problem: {0}".format(e), old_path, new_path)
+            corr_tuple = (f"file reading problem: {e}", old_path, new_path)
             if verbose:
                 print(str(corr_tuple))
             return corr_tuple
@@ -668,7 +664,7 @@ def calculate_correlation(args_tuple):
                 else:
                     concor, pearson = batch_correlate(data_1, data_2)
             except Exception as e:
-                corr_tuple = ("correlating problem: {0}".format(e), old_path, new_path)
+                corr_tuple = (f"correlating problem: {e}", old_path, new_path)
                 if verbose:
                     print(str(corr_tuple))
                 return corr_tuple
@@ -1029,7 +1025,8 @@ def compare_pipelines(
             verbose=input_dct["settings"]["verbose"],
         )
         write_pickle(all_corr_dct, corrs_pkl)
-        write_pickle(failures, failures_pkl)
+        if failures:
+            write_pickle(failures, failures_pkl)
 
     if dir_type == "work_dir":
         sorted_vals = []
