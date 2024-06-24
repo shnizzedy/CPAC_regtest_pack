@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.isort]
+order_by_type = "False"
+split_on_trailing_comma = "True"
+use_parentheses = "True"
+
+[project]
+dependencies = ["matplotlib", "nibabel", "numpy", "pandas", "pyyaml"]
+name = "cpac_correlations"
+requires-python = ">= 3.9"
+version = "1.0.128"
+
+[project.scripts]
+cpac_correlations = "cpac_correlations:main"
