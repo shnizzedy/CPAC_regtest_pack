@@ -1087,36 +1087,50 @@ def compare_pipelines(
     return corr_map, pearson_map
 
 
-def main() -> tuple:
-    """
-    • Parse commandline arguments
-    • Read input YAML
-    • Check for already completed stuff (pickles)
-    """
+class CpacCorrelationsNamespace(argparse.Namespace):
+    """Namespace with attributes required for cpac_correlations."""
+
+    branch: str
+    data_source: str
+    input_yaml: str
+
+
+def parse_args() -> CpacCorrelationsNamespace:
+    """Parse commandline args."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "input_yaml", type=str, help="file path of the script's input YAML"
     )
     parser.add_argument("--data_source", type=str, help="Which site data comes from")
     parser.add_argument("--branch", type=str, help="Branch name")
-    args = parser.parse_args()
-    data_source = args.data_source
-    branch = args.branch
+    return parser.parse_args(namespace=CpacCorrelationsNamespace())
+
+
+def main(args: CpacCorrelationsNamespace) -> tuple:
+    """Correlate two C-PAC runs.
+
+    • Parse commandline arguments
+    • Read input YAML
+    • Check for already completed stuff (pickles)
+    """
+
+    data_source: str = args.data_source
+    branch: str = args.branch
 
     # get the input info
-    input_dct = read_yml_file(args.input_yaml)
+    input_dct: dict = read_yml_file(args.input_yaml)
 
     # check for already completed stuff (pickles)
-    output_dir = os.path.join(
+    output_dir: str = os.path.join(
         os.getcwd(), f"correlations_{input_dct['settings']['run_name']}"
     )
-    pickle_dir = os.path.join(output_dir, "pickles")
+    pickle_dir: str = os.path.join(output_dir, "pickles")
 
     if not os.path.exists(pickle_dir):
         try:
             os.makedirs(pickle_dir)
         except:
-            err = (
+            err: str = (
                 "\n\n[!] Could not create the output directory for the "
                 "correlations. Do you have write permissions?\nAttempted "
                 f"output directory: {output_dir}\n\n"
@@ -1125,9 +1139,11 @@ def main() -> tuple:
 
     input_dct["settings"].update({"output_dir": output_dir, "pickle_dir": pickle_dir})
 
+    corr_map: dict
+    pearson_map: dict
     corr_map, pearson_map = compare_pipelines(input_dct, dir_type="output_dir")
     corr_map_keys = list(corr_map.keys())
-    all_keys = []
+    all_keys: list[str] = []
     for key in corr_map_keys:
         keys = list(corr_map[key])
         for i in keys:
@@ -1136,7 +1152,7 @@ def main() -> tuple:
 
 
 if __name__ == "__main__":
-    main()
+    main(parse_args())
 
 cpac_correlations = main
 
