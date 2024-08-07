@@ -1162,6 +1162,7 @@ __all__ = [
     "compare_pipelines",
     "correlate_text_based",
     "CorrValue",
+    "CpacCorrelationsNamespace",
     "cpac_correlations",
     "create_boxplot",
     "create_unique_file_dict",
