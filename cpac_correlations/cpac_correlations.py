@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
+import json
 import os
 import pickle
 from collections.abc import Generator
@@ -869,8 +870,7 @@ def run_correlations(
                 all_corr_dct["sub_optimal"][corr_tuple[0]] = []
             try:
                 all_corr_dct["sub_optimal"][corr_tuple[0]].append(
-                    "{0}:\n{1}\n{2}"
-                    "\n\n".format(corr_tuple[1][0], corr_tuple[3][0], corr_tuple[3][1])
+                    f"{corr_tuple[1][0]}:\n{corr_tuple[3][0]}\n{corr_tuple[3][1]}\n\n"
                 )
             except TypeError:
                 pass
@@ -1068,7 +1068,9 @@ def create_boxplot(corr_group, corr_group_name, pipeline_names=None, current_dir
 
 
 @overload
-def compare_pipelines(input_dct: InputDct, dir_type: Literal["work_dir"]) -> None:
+def compare_pipelines(
+    input_dct: InputDct, dir_type: Literal["log_dir", "work_dir"]
+) -> None:
     ...
 
 
@@ -1101,14 +1103,15 @@ def compare_pipelines(
     failures_pkl = os.path.join(pickle_dir, f"{dir_type}_failures.p")
     matched_pkl = os.path.join(pickle_dir, f"{dir_type}_matched_files.p")
 
-    all_corr_dct = None
+    all_corr_dct: Optional[CorrelationsDct] = None
+    matched_dct: Optional[MatchedFilepaths] = None
     if os.path.exists(corrs_pkl):
         print(
             f"\n\nFound the correlations pickle: {corrs_pkl}\n\n"
             "Starting from there..\n"
         )
         all_corr_dct = read_pickle(corrs_pkl)
-    elif os.path.exists(matched_pkl):
+    if os.path.exists(matched_pkl):
         print(
             f"\n\nFound the matched filepaths pickle: {matched_pkl}\n\n"
             "Starting from there..\n"
@@ -1129,6 +1132,13 @@ def compare_pipelines(
         if dir_type == "output_dir":
             report_missing(matched_dct, input_dct["pipelines"].keys(), output_dir)
 
+    if not matched_dct:
+        return {}, {}
+
+    subjects: list[str] = [
+        key[2] for key in matched_dct["matched"][list(matched_dct["matched"].keys())[0]]
+    ]
+
     if not all_corr_dct:
         all_corr_dct, failures = run_correlations(
             matched_dct,
@@ -1140,6 +1150,19 @@ def compare_pipelines(
         write_pickle(all_corr_dct, corrs_pkl)
         if failures:
             write_pickle(failures, failures_pkl)
+
+    correlations_json: list[dict[str, str]] = [
+        {"rowid": key, "columnid": subjects[i], "value": str(value)}
+        for correlation_type in ["pearson", "concordance"]
+        for key, value_list in all_corr_dct[correlation_type].items()
+        for i, value in enumerate(value_list)
+    ]
+    correlations_json_path: Path = Path(output_dir) / "correlations.json"
+    if correlations_json_path.exists():
+        with correlations_json_path.open("r", encoding="utf8") as json_file:
+            correlations_json = [*json.load(json_file), *correlations_json]
+    with correlations_json_path.open("w", encoding="utf8") as json_file:
+        json.dump(correlations_json, json_file, indent=2)
 
     if all_corr_dct["sub_optimal"]:
         write_yml_file(
@@ -1219,7 +1242,9 @@ def parse_args() -> CpacCorrelationsNamespace:
     return parser.parse_args(namespace=CpacCorrelationsNamespace())
 
 
-def main(args: Optional[CpacCorrelationsNamespace] = None) -> tuple[list[str], str, str]:
+def main(
+    args: Optional[CpacCorrelationsNamespace] = None,
+) -> tuple[list[str], str, str]:
     """Correlate two C-PAC runs.
 
     • Parse commandline arguments
