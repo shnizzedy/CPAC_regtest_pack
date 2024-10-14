@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 
 import argparse
-import json
-import os
-import pickle
 from collections.abc import Generator
+from fcntl import flock, LOCK_EX, LOCK_UN
+import json
 from multiprocessing import Pool
+import os
 from pathlib import Path
+import pickle
 from typing import (
     Any,
     cast,
@@ -20,10 +21,11 @@ from typing import (
     Union,
 )
 
-import nibabel as nb
 import numpy as np
 import pandas as pd
 import yaml
+
+import nibabel as nb
 
 Axis = Union[int, Tuple[int, ...]]
 
@@ -1158,12 +1160,19 @@ def compare_pipelines(
         for i, value in enumerate(value_list)
     ]
     correlations_json_path: Path = Path(output_dir) / "correlations.json"
+    # TODO: Add lock
+    with correlations_json_path.open("wb") as json_file:
+        pickle.dump(correlations_json, json_file)  # Write the file
+
     if correlations_json_path.exists():
         with correlations_json_path.open("r", encoding="utf8") as json_file:
             correlations_json = [*json.load(json_file), *correlations_json]
     with correlations_json_path.open("w", encoding="utf8") as json_file:
-        json.dump(correlations_json, json_file, indent=2)
-
+        try:
+            flock(json_file.fileno(), LOCK_EX)  # Lock the file
+            json.dump(correlations_json, json_file, indent=2)
+        finally:
+            flock(json_file.fileno(), LOCK_UN)  # Unlock the file
     if all_corr_dct["sub_optimal"]:
         write_yml_file(
             all_corr_dct["sub_optimal"], os.path.join(output_dir, "sub_optimal.yml")
