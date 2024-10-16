@@ -1,5 +1,10 @@
 #!/usr/bin/env python
-
+# -*- coding: utf-8 -*-
+# SBATCH -N 1
+# SBATCH -p RM-shared
+# SBATCH -t 01:00:00
+# SBATCH --ntasks=1
+"""Calculate correlation coefficients for C-PAC outputs."""
 import argparse
 from collections.abc import Generator
 from fcntl import flock, LOCK_EX, LOCK_UN
